@@ -16,7 +16,7 @@ def main():
         for y in range(rows):
             for x in range(cols):
                 board[x + y * cols] = random.randrange(0, 2) == 0
-                con.put(x, y, '●' if board[x + y * cols] else ' ')
+                con.put((x, y), ord('●' if board[x + y * cols] else ' '))
 
     def step():
         for i in range(cols * rows):
@@ -28,10 +28,10 @@ def main():
                 i = x + y * cols
                 count = counts[i]
                 if not board[i] and count == 3:
-                    con.put(x, y, '●')
+                    con.put((x, y), ord('●'))
                     board[i] = 1
                 elif board[i] and (count < 2 or count > 3):
-                    con.put(x, y, ' ')
+                    con.put((x, y), ord(' '))
                     board[i] = 0
 
     reset()

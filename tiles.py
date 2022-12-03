@@ -31,7 +31,7 @@ class TileEditor:
             split(self.tile_size)
 
         for i in range(len(self.tiles)):
-            con.get_image_for(chr(1024 + i)).copy_from(self.tiles[i])
+            con.get_image_for(1024 + i).copy_from(self.tiles[i])
 
         self.colors = [
             pix.color.BLACK,
@@ -135,7 +135,8 @@ class TileEditor:
         xy = (pos - (32.0, 32.0)) // self.tile_size
         if 0 <= xy.y < ps.y and 0 <= xy.x <= ps.x:
             self.tile = int(self.bank * 10 + xy.x + xy.y * ps.x)
-            self.info.put(5, 0, f"{self.tile:03}")
+            self.info.cursor_pos = (5,0)
+            self.info.write(f"{self.tile:03}")
             return True
         return False
 
@@ -208,7 +209,7 @@ class TileEditor:
             self.con.set_color(self.colors[self.current_color], pix.color.BLACK)
             for y in range(int(self.tpos.y), int(self.epos.y + 1)):
                 for x in range(int(self.tpos.x), int(self.epos.x + 1)):
-                    self.con.put(x, y, 1024 + self.tile)
+                    self.con.put((x, y), 1024 + self.tile)
 
 
 def main():

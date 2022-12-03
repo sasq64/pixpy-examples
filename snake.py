@@ -1,11 +1,11 @@
 import pixpy as pix
-Vec2 = pix.Vec2
+Vec2i = pix.Vec2i
 
 screen = pix.open_display(width=640, height=480)
 
 con = pix.Console()
-pos = Vec2(10, 10)
-add = [Vec2(1, 0), Vec2(0, 1), Vec2(-1, 0), Vec2(0, -1)]
+pos = Vec2i(10, 10)
+add = [Vec2i(1, 0), Vec2i(0, 1), Vec2i(-1, 0), Vec2i(0, -1)]
 direction = 0
 
 while pix.run_loop():
@@ -20,9 +20,9 @@ while pix.run_loop():
 
     if screen.frame_counter % 10 == 0:
         pos += add[direction]
-        if con.get(pos) != ' ':
+        if con.get(pos) != 0x20:
             break
-        con.put(pos, '█')
+        con.put(pos, ord('█'))
 
     con.render(screen.context, size=screen.size)
     screen.swap()

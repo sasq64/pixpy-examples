@@ -1,11 +1,12 @@
 import pixpy as pix
 import dungen
 Vec2 = pix.Vec2
+Int2 = pix.Vec2i
 
 
 class Game:
-    MOVE_LOOKUP = {pix.key.LEFT: Vec2(-1, 0), pix.key.RIGHT: Vec2(1, 0),
-                   pix.key.DOWN: Vec2(0, 1), pix.key.UP: Vec2(0, -1)}
+    MOVE_LOOKUP = {pix.key.LEFT: Int2(-1, 0), pix.key.RIGHT: Int2(1, 0),
+                   pix.key.DOWN: Int2(0, 1), pix.key.UP: Int2(0, -1)}
 
     def __init__(self, con, screen):
         self.screen = screen
@@ -15,7 +16,7 @@ class Game:
         self.tile_size = con.tile_size
         self.tiles = pix.load_png('data/mono_tiles.png').split(self.tile_size)
         for i, tile in enumerate(self.tiles):
-            con.get_image_for(chr(1024 + i)).copy_from(tile)
+            con.get_image_for(1024 + i).copy_from(tile)
 
         self.map = []
         gen = dungen.MessyBSPTree()
@@ -23,10 +24,10 @@ class Game:
         self.con.set_color(pix.color.LIGHT_GREY, pix.color.BLACK)
         for y in range(len(level)):
             for x in range(len(level[0])):
-                self.con.put(x, y, 1024 + level[x][y])
+                self.con.put((x, y), 1024 + level[x][y])
 
         self.player = self.tiles[26 * 16]
-        self.player_pos = Vec2(10, 10)
+        self.player_pos = Int2(10, 10)
 
     def to_screen(self, tile_pos):
         return tile_pos * self.tile_size * self.zoom + self.offset
@@ -38,8 +39,7 @@ class Game:
                     diff = Game.MOVE_LOOKUP[k]
                     if diff:
                         new_pos = self.player_pos + diff
-                        c = self.con.get(new_pos)
-                        if ord(c) == 1024:
+                        if self.con.get(new_pos) == 1024:
                             self.player_pos = new_pos
 
         border = self.zoom * 100

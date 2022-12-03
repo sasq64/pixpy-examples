@@ -12,7 +12,7 @@ while pix.run_loop():
     canvas.filled_circle(center=pos, radius=4)
     canvas.line(end=pos)
 
-    screen.blit(image=face, size=(1280, 720))
+    screen.blit(image=face, size=screen.size)
     screen.blit(canvas)
 
     screen.swap()
