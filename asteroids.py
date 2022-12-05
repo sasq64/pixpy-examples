@@ -3,13 +3,13 @@
 ###########################################################################
 
 import pixpy as pix
-from pixpy import key as keys
-from pixpy import color
+import pixpy.key
+import pixpy.color
+from pixpy import color,Float2
 import math
 import random
 from dataclasses import dataclass
-
-Vec2 = pix.Vec2
+from typing import List, Tuple, Dict
 
 
 @dataclass
@@ -19,8 +19,8 @@ class Sprite:
     It also knows what to do when reaching the edge of the screen.
     """
     image: pix.Image
-    pos: Vec2
-    velocity: Vec2 = Vec2.ZERO
+    pos: Float2
+    velocity: Float2 = Float2.ZERO
     rotation: float = 0
     wrap: bool = True
     dead: bool = False
@@ -33,8 +33,8 @@ class Sprite:
         """Render the sprite to the target context."""
 
         # Check if position is outside screen
-        d = self.pos.clip(Vec2.ZERO, target.size)
-        if d != Vec2.ZERO:
+        d = self.pos.clip(Float2.ZERO, target.size)
+        if d != Float2.ZERO:
             if self.wrap:
                 self.pos -= target.size * d.sign()
             else:
@@ -42,18 +42,18 @@ class Sprite:
         target.draw(image=self.image, center=self.pos, rot=self.rotation)
 
     @staticmethod
-    def from_lines(size, points):
+    def from_lines(size, points : List[Tuple[float, float]]):
         """Create a sprite from lines"""
         image = pix.Image(size)
-        image.clear(pix.color.TRANSP)
+        image.clear(color.TRANSP)
         image.line_width = 1
-        last = None
+        last : Tuple[float, float]  | None = None
         for p in points:
             if last:
                 image.line(start=last, end=p)
             last = p
         image.line(start=last, end=points[0])
-        return Sprite(image, pos=Vec2.ZERO)
+        return Sprite(image, pos=Float2.ZERO)
 
 
 class Asteroids:
@@ -91,7 +91,7 @@ class Asteroids:
     def render(self):
         """Render and update the game."""
         screen = self.target
-        self.render_number(Vec2(10, 10), self.score)
+        self.render_number(Float2(10, 10), self.score)
         for i in range(self.lives):
             screen.draw(image=self.life_image, center=(i * 40 + 500, 30),
                         size=self.life_image.size * 2, rot=-math.pi / 2)
@@ -136,13 +136,13 @@ class Asteroids:
         """Create a new asteroid with the given radius."""
         s = 10
         z = radius * 2 + radius / 1.5
-        points = [Vec2.from_angle(i * math.pi * 2 / s)
+        points = [Float2.from_angle(i * math.pi * 2 / s)
                   * (radius + ((i % 2) - 0.5) * random.random() * radius / 1.5)
                   + (z / 2, z / 2) for i in range(s)]
         asteroid = Sprite.from_lines((z, z), points)
 
-        asteroid.velocity = Vec2.from_angle(random.random() * math.pi * 2)
-        r = Vec2(random.random(), random.random())
+        asteroid.velocity = Float2.from_angle(random.random() * math.pi * 2)
+        r = Float2(random.random(), random.random())
         pos = self.screen_size * r
         # Clamp position to screen edge
         i = random.randint(0, 1)
@@ -154,7 +154,7 @@ class Asteroids:
         """Fire a bullet in the same direction the ship is rotated."""
         self.bullets.append(
             Sprite(self.bullet, self.ship.pos,
-                   Vec2.from_angle(self.ship.rotation) * 5, 0, False))
+                   Float2.from_angle(self.ship.rotation) * 5, 0, False))
 
     def update_player(self):
         """Read the keyboard and update the player ship."""
@@ -168,7 +168,7 @@ class Asteroids:
 
         speed = 0.1
         if pix.is_pressed('z'):
-            v = ship.velocity + Vec2.from_angle(
+            v = ship.velocity + Float2.from_angle(
                 ship.rotation) * speed
             m = v.mag()
             if m > 2.2:
@@ -187,10 +187,10 @@ class Asteroids:
         s = sprite.velocity.mag() * 2
         angle = sprite.velocity.angle()
         s0 = self.create_asteroid(sprite.radius / 2)
-        s0.velocity = Vec2.from_angle(angle + 0.2) * s
+        s0.velocity = Float2.from_angle(angle + 0.2) * s
         s0.pos = sprite.pos + s0.velocity * sprite.radius / 4
         s1 = self.create_asteroid(sprite.radius / 2)
-        s1.velocity = Vec2.from_angle(angle - 0.2) * s
+        s1.velocity = Float2.from_angle(angle - 0.2) * s
         s1.pos = sprite.pos + s1.velocity * sprite.radius / 4
         return [s0, s1]
 
@@ -223,6 +223,7 @@ def main():
     screen = pix.open_display(width=640 * 2, height=480 * 2)
     game = Asteroids(screen)
 
+    print(screen.size)
     while pix.run_loop():
         screen.clear()
         game.render()

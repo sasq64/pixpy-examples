@@ -20,7 +20,7 @@ class TextEdit:
         self.con = pix.Console(font_file='data/Hack.ttf', font_size=24,
                                rows=50, cols=120)
         self.con.cursor_on = True
-        self.con.cursor_pos = pix.Vec2(0, 0)
+        self.con.cursor_pos = pix.Int2(0, 0)
 
     def goto_line(self, y):
         if y < 0 or y >= len(self.lines):

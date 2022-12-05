@@ -1,7 +1,6 @@
 import pixpy as pix
 import dungen
-Vec2 = pix.Vec2
-Int2 = pix.Vec2i
+from pixpy import Int2,Float2
 
 
 class Game:
@@ -11,7 +10,7 @@ class Game:
     def __init__(self, con, screen):
         self.screen = screen
         self.con = con
-        self.offset = Vec2(0, 0)
+        self.offset = Float2(0, 0)
         self.zoom = 2
         self.tile_size = con.tile_size
         self.tiles = pix.load_png('data/mono_tiles.png').split(self.tile_size)
@@ -44,7 +43,7 @@ class Game:
 
         border = self.zoom * 100
         screen_pos = self.to_screen(self.player_pos)
-        clip = screen_pos.clip(Vec2(border, border), self.screen.size - border)
+        clip = screen_pos.clip(Float2(border, border), self.screen.size - border)
         self.offset -= (clip / self.zoom)
 
     def render(self):

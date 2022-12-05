@@ -2,7 +2,7 @@ import pixpy as pix
 import struct
 import os
 
-Vec2 = pix.Vec2
+from pixpy import Float2
 
 
 class Panel:
@@ -25,7 +25,7 @@ class TileEditor:
         self.con = con
         self.tile_size = con.tile_size
 
-        self.panel_size = Vec2(16, 40)
+        self.panel_size = Float2(16, 40)
 
         self.tiles = pix.load_png('data/mono_tiles.png'). \
             split(self.tile_size)
@@ -52,10 +52,10 @@ class TileEditor:
             pix.color.LIGHT_GREY,
         ]
 
-        self.offset = Vec2.ZERO
+        self.offset = Float2.ZERO
         self.tile = 1
-        self.tpos = Vec2.ZERO
-        self.epos = Vec2.ZERO
+        self.tpos = Float2.ZERO
+        self.epos = Float2.ZERO
         self.scroll_step = 8 * 16
         self.filling = False
         self.bank = 0
@@ -106,13 +106,13 @@ class TileEditor:
                         case '-':
                             self.zoom /= 2.0
                         case 'w':
-                            self.offset += Vec2(0, self.scroll_step)
+                            self.offset += Float2(0, self.scroll_step)
                         case 's':
-                            self.offset -= Vec2(0, self.scroll_step)
+                            self.offset -= Float2(0, self.scroll_step)
                         case 'a':
-                            self.offset += Vec2(self.scroll_step, 0)
+                            self.offset += Float2(self.scroll_step, 0)
                         case 'd':
-                            self.offset -= Vec2(self.scroll_step, 0)
+                            self.offset -= Float2(self.scroll_step, 0)
                     t = ord(text[0]) - 0x30
                     if 0 <= t <= 9:
                         if t == 0:
@@ -127,7 +127,7 @@ class TileEditor:
                         continue
                     self.tpos = (pos - self.offset) // (
                                 self.tile_size * self.zoom)
-                    self.epos = self.tpos + Vec2.ONE
+                    self.epos = self.tpos + Float2.ONE
                     self.filling = True
 
     def select_tile(self, pos):
@@ -150,7 +150,7 @@ class TileEditor:
 
     def render_tile_panel(self, screen):
         screen.draw_color = pix.color.DARK_GREY
-        pos = Vec2(32, 32)
+        pos = Float2(32, 32)
         screen.filled_rect(top_left=pos - 4,
                            size=self.panel_size * self.tile_size + 8)
         screen.draw_color = pix.color.WHITE
@@ -160,18 +160,18 @@ class TileEditor:
                 if i + self.bank * 10 >= len(self.tiles):
                     break
                 screen.blit(self.tiles[i + self.bank * 10],
-                            Vec2(x, y) * self.tile_size + pos)
+                            Float2(x, y) * self.tile_size + pos)
         screen.draw_color = pix.color.GREEN
         b = self.bank * 10
         x = (self.tile - b) % self.panel_size.x
         y = (self.tile - b) / self.panel_size.x
-        p = Vec2(int(x), int(y))
+        p = Float2(int(x), int(y))
         screen.rect(
             top_left=p * self.tile_size + pos, size=self.tile_size)
 
     def render_colors(self, screen):
-        size = Vec2(30, 30)
-        pos = Vec2(screen.width - size.x - 2, 2)
+        size = Float2(30, 30)
+        pos = Float2(screen.width - size.x - 2, 2)
         for col in self.colors:
             screen.draw_color = col
             screen.filled_rect(top_left=pos, size=size - 2)
@@ -188,7 +188,7 @@ class TileEditor:
 
         if self.dialog:
             self.screen.draw_color = pix.color.RED
-            pos = Vec2(0, self.screen.size.y - self.dialog.tile_size.y)
+            pos = Float2(0, self.screen.size.y - self.dialog.tile_size.y)
             self.screen.filled_rect(top_left=pos - (2, 2),
                                     size=(self.dialog.grid_size *
                                           self.dialog.tile_size) + 4)
@@ -202,7 +202,7 @@ class TileEditor:
             self.epos = (mouse - self.offset) // (self.tile_size * self.zoom)
             self.screen.rect(
                 self.tpos * self.tile_size * self.zoom + self.offset,
-                (self.epos - self.tpos + Vec2.ONE) *
+                (self.epos - self.tpos + Float2.ONE) *
                 self.tile_size * self.zoom)
         else:
             self.filling = False

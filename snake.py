@@ -1,11 +1,12 @@
 import pixpy as pix
-Vec2i = pix.Vec2i
+from pixpy import Int2
 
 screen = pix.open_display(width=640, height=480)
 
 con = pix.Console()
-pos = Vec2i(10, 10)
-add = [Vec2i(1, 0), Vec2i(0, 1), Vec2i(-1, 0), Vec2i(0, -1)]
+pos = Int2(10, 10)
+add = [Int2(1, 0), Int2(0, 1), Int2(-1, 0), Int2(0, -1)]
+
 direction = 0
 
 while pix.run_loop():

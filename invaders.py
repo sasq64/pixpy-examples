@@ -2,7 +2,7 @@ import os
 import pixpy as pix
 from pixpy import key as keys
 
-Vec2 = pix.Vec2
+Float2 = pix.Float2
 
 screen = pix.open_display(width=800, height=600)
 
@@ -12,7 +12,7 @@ bg = pix.load_png(f"{data}/background.png")
 sprites = img.split(cols=8, rows=2)
 enemies = sprites[0:6]
 player = sprites[13]
-pos = Vec2(400, 552)
+pos = Float2(400, 552)
 
 while pix.run_loop():
     screen.blit(image=bg)

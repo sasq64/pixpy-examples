@@ -1,6 +1,5 @@
 import pixpy as pix
-
-Vec2 = pix.Vec2
+from pixpy import Float2
 
 mad = [
     -27, -11, -23, -6, -28, -13, -22, -6, -20, -5, -12, -5, -27, -14, -26, -13,
@@ -133,9 +132,9 @@ mad = [
 screen = pix.open_display(width=1280, height=720)
 
 offset = screen.size / 2
-scale = Vec2(4, 4)
+scale = Float2(4, 4)
 
 for i in range(0, len(mad), 4):
-    p0 = Vec2(mad[i], -mad[i + 1])
-    p1 = Vec2(mad[i + 2], -mad[i + 3])
+    p0 = Float2(mad[i], -mad[i + 1])
+    p1 = Float2(mad[i + 2], -mad[i + 3])
     screen.line(start=p0 * scale + offset, end=p1 * scale + offset)

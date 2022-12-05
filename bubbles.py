@@ -17,6 +17,6 @@ while pix.run_loop():
             v = math.cos(i + v) + math.cos(r * i + x)
             x = u + t
             col = pix.rgba(i / n, j / n, 99 / 200, 1.0)
-            screen.plot(pix.Vec2(u * s + cx, v * s + cy), col)
+            screen.plot(pix.Float2(u * s + cx, v * s + cy), col)
     t += .005
     screen.swap()

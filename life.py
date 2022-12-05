@@ -39,7 +39,7 @@ def main():
         if type(pix.get_event()) == pix.event.Text:
             reset()
         step()
-        con.render(screen.context, pix.Vec2.ZERO, screen.size)
+        con.render(screen.context, pix.Float2.ZERO, screen.size)
         screen.swap()
 
 
