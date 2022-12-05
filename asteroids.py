@@ -3,9 +3,9 @@
 ###########################################################################
 
 import pixpy as pix
-import pixpy.key
-import pixpy.color
 from pixpy import color,Float2
+from pixpy import key as keys
+import os
 import math
 import random
 from dataclasses import dataclass
@@ -78,7 +78,8 @@ class Asteroids:
         self.game_state = Asteroids.PLAYING
         self.score = 0
         self.frame_counter = 0
-        self.font = pix.load_font('data/hyperspace_bold.ttf')
+        font_name = f"{os.path.dirname(__file__)}/data/hyperspace_bold.ttf"
+        self.font = pix.load_font(font_name)
         self.numbers = [
             self.font.make_image(text=chr(0x30 + i), size=32,
                                  color=color.YELLOW)
