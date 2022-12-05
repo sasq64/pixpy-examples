@@ -3,9 +3,8 @@
 ###########################################################################
 
 import pixpy as pix
-import pixpy.key
-import pixpy.color
 from pixpy import color,Float2
+from pixpy import key as keys
 import math
 import random
 from dataclasses import dataclass
