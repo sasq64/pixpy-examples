@@ -1,5 +1,6 @@
 import pixpy as pix
 import math
+from typing import Tuple, cast
 
 screen = pix.open_display(size=(1280, 720))
 
@@ -8,7 +9,8 @@ r = 2 * math.pi / 235
 x, y, v, t = 0, 0, 0, 0
 
 while pix.run_loop():
-    (cx, cy) = screen.size / 2
+    (cx, cy) = cast(Tuple[int, int], screen.size / 2)
+    
     s = screen.size.y / 5
     screen.clear()
     for i in range(n):

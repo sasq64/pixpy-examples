@@ -3,13 +3,10 @@
 ###########################################################################
 
 import pixpy as pix
-from pixpy import color,Float2
-from pixpy import key as keys
-import os
+from pixpy import Float2
 import math
 import random
 from dataclasses import dataclass
-from typing import List, Tuple, Dict
 
 
 @dataclass
@@ -42,12 +39,12 @@ class Sprite:
         target.draw(image=self.image, center=self.pos, rot=self.rotation)
 
     @staticmethod
-    def from_lines(size, points : List[Tuple[float, float]]):
+    def from_lines(size, points):
         """Create a sprite from lines"""
         image = pix.Image(size)
-        image.clear(color.TRANSP)
+        image.clear(pix.color.TRANSP)
         image.line_width = 1
-        last : Tuple[float, float]  | None = None
+        last = None
         for p in points:
             if last:
                 image.line(start=last, end=p)
@@ -78,11 +75,10 @@ class Asteroids:
         self.game_state = Asteroids.PLAYING
         self.score = 0
         self.frame_counter = 0
-        font_name = f"{os.path.dirname(__file__)}/data/hyperspace_bold.ttf"
-        self.font = pix.load_font(font_name)
+        self.font = pix.load_font('data/hyperspace_bold.ttf')
         self.numbers = [
             self.font.make_image(text=chr(0x30 + i), size=32,
-                                 color=color.YELLOW)
+                                 color=pix.color.YELLOW)
             for i in range(10)]
 
         self.game_over = self.font.make_image("GAME_OVER", 48)
@@ -160,9 +156,9 @@ class Asteroids:
     def update_player(self):
         """Read the keyboard and update the player ship."""
         ship = self.ship
-        if pix.is_pressed(keys.LEFT):
+        if pix.is_pressed(pix.key.LEFT):
             ship.rotation -= 0.05
-        elif pix.is_pressed(keys.RIGHT):
+        elif pix.is_pressed(pix.key.RIGHT):
             ship.rotation += 0.05
         if pix.was_pressed('x'):
             self.fire_bullet()

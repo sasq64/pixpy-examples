@@ -1,7 +1,8 @@
 import pixpy as pix
+from typing import List, Any
 
 
-def clamp(v, lo, hi):
+def clamp(v: Any, lo: Any, hi: Any):
     if v < lo:
         return lo
     if v >= hi:
@@ -12,7 +13,7 @@ def clamp(v, lo, hi):
 class TextEdit:
 
     def __init__(self):
-        self.lines = [[]]
+        self.lines : List[List[str] ]= [[]]
         self.line = self.lines[0]
         self.scroll_pos = 0
         self.xpos = 0
@@ -22,7 +23,7 @@ class TextEdit:
         self.con.cursor_on = True
         self.con.cursor_pos = pix.Int2(0, 0)
 
-    def goto_line(self, y):
+    def goto_line(self, y: int):
         if y < 0 or y >= len(self.lines):
             return False
         self.ypos = y
@@ -30,7 +31,7 @@ class TextEdit:
         self.xpos = clamp(self.xpos, 0, len(self.line) + 1)
         return True
 
-    def handle_key(self, key):
+    def handle_key(self, key: int):
         if key == pix.key.F5:
             txt = "\n".join(["".join(l) for l in self.lines])
             exec(txt)
@@ -78,13 +79,16 @@ class TextEdit:
                 self.goto_line(y - 1)
                 self.xpos = ll
 
-    def update(self, events):
+    def update(self, events: List[pix.event.AnyEvent]):
         for e in events:
-            if type(e) == pix.event.Text:
-                self.line.insert(self.xpos, e.text)
-                self.xpos += len(e.text)
-            if type(e) == pix.event.Key:
-                self.handle_key(e.key)
+            match e:
+                case pix.event.Text(text):
+                    self.line.insert(self.xpos, text)
+                    self.xpos += len(e.text)
+                case pix.event.Key(key):
+                    self.handle_key(key)
+                case _:
+                    pass
 
         if self.xpos < 0:
             # Wrap to end of previous line
@@ -106,7 +110,7 @@ class TextEdit:
         if self.ypos >= self.scroll_pos + 19:
             self.scroll_pos = self.ypos - 19
 
-    def render(self, context):
+    def render(self, context: pix.Context):
         self.xpos = clamp(self.xpos, 0, len(self.line) + 1)
         self.con.clear()
         for y in range(20):

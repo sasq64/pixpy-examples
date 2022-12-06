@@ -15,7 +15,7 @@ player = sprites[13]
 pos = Float2(400, 552)
 
 while pix.run_loop():
-    screen.blit(image=bg)
+    screen.draw(image=bg)
     for e in enemies:
         screen.draw(image=e, center=e.pos * 2 + (100, 200), size=e.size * 2)
     screen.draw(image=player, top_left=pos, size=player.size*2)

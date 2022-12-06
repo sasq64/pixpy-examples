@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
 
 import pixpy as pix
-from pathlib import Path
 from typing import Dict
 import math
 import os
 
-from pixpy import Float2,Int2
+from pixpy import Float2
 
 
 screen = pix.open_display(size=(640, 480))
 
 font_name = f"{os.path.dirname(__file__)}/data/Impact.ttf"
-font = pix.load_font(Path(font_name))
+font = pix.load_font(font_name)
 
 chess = pix.Image(width=32, pixels=[
                   ((i+i//32) & 1) * pix.rgba(0.2,0.1,i/32*8,1) for i in range(32*32)])
