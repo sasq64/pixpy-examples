@@ -6,6 +6,7 @@ import pixpy as pix
 from pixpy import Float2
 import math
 import random
+from typing import Any
 from dataclasses import dataclass
 
 
@@ -15,18 +16,32 @@ class Sprite:
     A sprite is an image that has a position on screen, and velocity.
     It also knows what to do when reaching the edge of the screen.
     """
+
     image: pix.Image
+    "Image that represents sprite."
+
     pos: Float2
+    "Current position of sprite."
+
     velocity: Float2 = Float2.ZERO
+    "Veolicity of sprite."
+
     rotation: float = 0
+    "Rotation of sprite in radians."
+
     wrap: bool = True
+    "True if sprite should wrap to other side when leaving screen."
+
     dead: bool = False
-    radius: int = 1
+    "True if sprite should be removed."
+
+    radius: float = 1
+    "Radius of sprite, when checking collision."
 
     def update(self):
         self.pos += self.velocity
 
-    def render(self, target):
+    def render(self, target: pix.Context):
         """Render the sprite to the target context."""
 
         # Check if position is outside screen
@@ -39,39 +54,51 @@ class Sprite:
         target.draw(image=self.image, center=self.pos, rot=self.rotation)
 
     @staticmethod
-    def from_lines(size, points):
+    def from_lines(size: Float2 | tuple[float, float], points: list[Any]):
         """Create a sprite from lines"""
         image = pix.Image(size)
         image.clear(pix.color.TRANSP)
         image.line_width = 1
-        last = None
+        last = points[0]
         for p in points:
-            if last:
-                image.line(start=last, end=p)
+            image.line(start=last, end=p)
             last = p
         image.line(start=last, end=points[0])
         return Sprite(image, pos=Float2.ZERO)
 
 
 class Asteroids:
-    PLAYING = 0
-    SHIP_RESPAWN = 1
-    GAME_OVER = 2
+    "An Asteroids game for pixpy."
 
-    def __init__(self, target):
+    PLAYING = 0
+    "We are currently playing."
+
+    SHIP_RESPAWN = 1
+    "We have lost a life and ship is about to be respawned."
+
+    GAME_OVER = 2
+    "The game is over."
+
+    def __init__(self, target: pix.Context):
         random.seed(19)
         self.target = target
         self.screen_size = target.size
         self.ship = Sprite.from_lines((32, 32),
                                       [(28, 16), (4, 8), (8, 16), (4, 24)])
+        "The player ship sprite"
+
         self.life_image = self.ship.image
+        "The image to represent lives."
+
         self.ship.pos = self.screen_size / 2
         self.asteroid_count = 4
+        "Number of asteroids to spawn when screen is clearered."
+
         self.lives = 3
         self.respawn_at = -1
         self.bullet = pix.Image((4, 4))
         self.bullet.filled_circle(center=(2, 2), radius=2)
-        self.bullets = []
+        self.bullets : list[Sprite] = []
         self.game_state = Asteroids.PLAYING
         self.score = 0
         self.frame_counter = 0
@@ -120,16 +147,16 @@ class Asteroids:
             self.spawn_asteroids()
         self.frame_counter += 1
 
-    def render_number(self, pos, value, digits=5):
+    def render_number(self, pos: Float2, value: int, digits: int=5):
         """Render a number on the screen."""
         pos += (self.numbers[0].size.x * digits, 0)
-        for i in range(digits):
+        for _ in range(digits):
             img = self.numbers[value % 10]
             value //= 10
             self.target.draw(image=img, top_left=pos)
             pos -= (img.size.x, 0)
 
-    def create_asteroid(self, radius):
+    def create_asteroid(self, radius: float):
         """Create a new asteroid with the given radius."""
         s = 10
         z = radius * 2 + radius / 1.5
@@ -179,7 +206,7 @@ class Asteroids:
         self.asteroids = [self.create_asteroid(40)
                           for _ in range(self.asteroid_count)]
 
-    def break_apart(self, sprite):
+    def break_apart(self, sprite: Sprite):
         """Break sprite into two new sprites"""
         s = sprite.velocity.mag() * 2
         angle = sprite.velocity.angle()
@@ -196,7 +223,7 @@ class Asteroids:
         Iterate over all asteroids and see if they have collided with
         a bullet or the player ship.
         """
-        new_asteroids = []
+        new_asteroids : list[Sprite] = []
         for a in self.asteroids:
             if (self.ship.pos - a.pos).mag() < (a.radius + 10):
                 a.dead = True
@@ -218,7 +245,7 @@ class Asteroids:
 
 def main():
     screen = pix.open_display(width=640 * 2, height=480 * 2)
-    game = Asteroids(screen)
+    game = Asteroids(screen.context)
 
     print(screen.size)
     while pix.run_loop():

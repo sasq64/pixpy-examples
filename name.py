@@ -17,7 +17,7 @@ def main():
             case _:
                 pass
 
-        screen.draw(con, (0,0), screen.size)
+        screen.draw(drawable=con, top_left=(0,0), size=screen.size)
         screen.swap()
 
 main()

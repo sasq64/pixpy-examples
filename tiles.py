@@ -28,7 +28,7 @@ class TileEditor:
         self.panel_size = Float2(16, 40)
 
         self.tiles = pix.load_png('data/mono_tiles.png'). \
-            split(self.tile_size * (1,1))
+            split(self.tile_size.tof())
 
         for i in range(len(self.tiles)):
             con.get_image_for(1024 + i).copy_from(self.tiles[i])
