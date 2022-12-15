@@ -77,7 +77,7 @@ class TileEditor:
 
     def ask_line(self):
         self.dialog = pix.Console(cols=40, rows=1)
-        self.dialog.get_line()
+        self.dialog.read_line()
 
     def update(self):
         for event in pix.all_events():

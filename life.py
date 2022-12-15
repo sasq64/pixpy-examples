@@ -5,8 +5,8 @@ import pixpy as pix
 def main():
     screen = pix.open_display(width=1280, height=720)
     con = pix.Console(cols=160, rows=90)
-    cols = int(con.grid_size.x)
-    rows = int(con.grid_size.y)
+    cols = con.grid_size.x
+    rows = con.grid_size.y
     con.set_color(pix.color.YELLOW, pix.color.BLACK)
 
     counts = [0] * (cols * rows + cols + 1)
@@ -36,10 +36,11 @@ def main():
 
     reset()
     while pix.run_loop():
-        if type(pix.get_event()) == pix.event.Text:
-            reset()
+        for e in pix.all_events():
+            if isinstance(e, pix.event.Text):
+                reset()
         step()
-        con.render(screen.context, pix.Float2.ZERO, screen.size)
+        screen.draw(drawable=con, size=screen.size)
         screen.swap()
 
 

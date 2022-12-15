@@ -1,6 +1,6 @@
-###########################################################################
-# Asteroids example for pixpy
-###########################################################################
+""""
+Asteroids example for pixpy
+"""
 
 import pixpy as pix
 from pixpy import Float2
@@ -107,9 +107,12 @@ class Asteroids:
             self.font.make_image(text=chr(0x30 + i), size=32,
                                  color=pix.color.YELLOW)
             for i in range(10)]
+        "Array of digit images used to render numbers."
 
         self.game_over = self.font.make_image("GAME_OVER", 48)
         self.asteroids = []
+        "Current active asteroid sprites"
+
         self.spawn_asteroids()
 
     def render(self):

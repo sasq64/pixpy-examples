@@ -4,7 +4,7 @@ from pixpy import Int2
 class SnakeGame:
 
     ADD = [Int2(1, 0), Int2(0, 1), Int2(-1, 0), Int2(0, -1)]
-    APPLE = ord('$')
+    APPLE = ord('⬤')
 
     def make_apple(self):
         while True:
