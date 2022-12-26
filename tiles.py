@@ -219,7 +219,7 @@ class TileEditor:
 
 def main():
     screen = pix.open_display(width=1280, height=860)
-    con = pix.Console(cols=256, rows=256, tile_size=(16, 16))
+    con = pix.Console(cols=256, rows=24, tile_size=(16, 16))
 
     tile_editor = TileEditor(con, screen)
 

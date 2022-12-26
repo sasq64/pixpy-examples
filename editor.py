@@ -79,17 +79,7 @@ class TextEdit:
                 self.goto_line(y - 1)
                 self.xpos = ll
 
-    def update(self, events: List[pix.event.AnyEvent]):
-        for e in events:
-            match e:
-                case pix.event.Text(text):
-                    self.line.insert(self.xpos, text)
-                    self.xpos += len(e.text)
-                case pix.event.Key(key):
-                    self.handle_key(key)
-                case _:
-                    pass
-
+    def wrap_cursor(self):
         if self.xpos < 0:
             # Wrap to end of previous line
             if self.goto_line(self.ypos - 1):
@@ -109,6 +99,16 @@ class TextEdit:
             self.scroll_pos = self.ypos
         if self.ypos >= self.scroll_pos + 19:
             self.scroll_pos = self.ypos - 19
+
+    def update(self, events: List[pix.event.AnyEvent]):
+        for e in events:
+            if isinstance(e, pix.event.Text):
+                self.line.insert(self.xpos, e.text)
+                self.xpos += len(e.text)
+            if isinstance(e, pix.event.Key):
+                self.handle_key(e.key)
+        self.wrap_cursor()
+
 
     def render(self, context: pix.Context):
         self.xpos = clamp(self.xpos, 0, len(self.line) + 1)
