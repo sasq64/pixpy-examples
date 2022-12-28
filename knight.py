@@ -49,7 +49,7 @@ class Platformer:
         self.sheet = self.sprites[WALKING]
         self.start_frame = 0
         self.screen = screen
-        self.zoom = 2.5
+        self.zoom = 2
         self.frame = 0
         self.feet_collide = False
         self.head_collide = False
