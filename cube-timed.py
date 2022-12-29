@@ -66,7 +66,8 @@ for i,plane in enumerate(planes):
     plane.draw_color = 0xffffffff
     plane.point_size = 1
     for y in range(plane.size.toi().y//3):
-        plane.plot(center=pix.Float2(random.randint(0,screen.size.toi().x), y*3+i), color=c)
+        #plane.plot(center=pix.Float2(random.randint(0,screen.size.toi().x), y*3+i), color=c)
+        plane.set_pixel((random.randint(0,screen.size.toi().x), y*3+i), c)
 
 
 while pix.run_loop():

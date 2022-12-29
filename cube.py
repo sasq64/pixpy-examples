@@ -21,44 +21,19 @@ def make_z_mat(a: float):
 
 
 screen = pix.open_display(size=(1280, 720))
-
-
-xa = 0
-ya = 0
-za = 0
-
-vertices = np.array([[1, 1, 1],
-                     [1, 1, -1],
-                     [1, -1, 1],
-                     [1, -1, -1],
-                     [-1, 1, 1],
-                     [-1, 1, -1],
-                     [-1, -1, 1],
-                     [-1, -1, -1]])
-
-indexes = np.array([[0, 1, 2],
-                    [1, 2, 3],
-                    [4, 5, 6],
-                    [5, 6, 7],
-                    [0, 1, 4],
-                    [1, 4, 5],
-                    [2, 3, 6],
-                    [3, 6, 7],
-                    [0, 2, 4],
-                    [2, 4, 6],
-                    [1, 3, 5],
-                    [3, 5, 7]])
-
-quads = np.array([[0, 1, 3, 2],
-                  [4, 5, 7, 6],
-                  [0, 1, 5, 4],
-                  [2, 3, 7, 6],
-                  [0, 2, 6, 4],
-                  [1, 3, 7, 5]])
-
-
 center = screen.size / 2
 screen.line_width = 2
+
+xa = 0.0
+ya = 0.0
+za = 0.0
+
+vertices = np.array([[1, 1, 1], [1, 1, -1], [1, -1, 1], [1, -1, -1],
+                     [-1, 1, 1], [-1, 1, -1], [-1, -1, 1], [-1, -1, -1]])
+
+lines = [(0, 1), (1, 3), (3, 2), (2, 0), (4, 5), (5, 7),
+         (7, 6), (6, 4), (0, 4), (1, 5), (2, 6), (3, 7)]
+
 while pix.run_loop():
 
     screen.clear()
@@ -67,27 +42,11 @@ while pix.run_loop():
 
     points = [v @ mat for v in vertices]
 
-    d = 4
-    z = 3
-
-    p = [pix.Float2(v[0], v[1]) * (d/(v[2] + z))
+    p = [pix.Float2(v[0], v[1]) * (4/(v[2] + 3))
          * 150 + center for v in points]
 
-    screen.line(p[0], p[1])
-    screen.line(p[3])
-    screen.line(p[2])
-    screen.line(p[0])
-
-    screen.line(p[4], p[5])
-    screen.line(p[7])
-    screen.line(p[6])
-    screen.line(p[4])
-
-    screen.line(p[0], p[4])
-    screen.line(p[1], p[5])
-    screen.line(p[2], p[6])
-    screen.line(p[3], p[7])
-
+    for line in lines:
+        screen.line(p[line[0]], p[line[1]])
     xa += 0.001
     ya += 0.002
     za += 0.0005
