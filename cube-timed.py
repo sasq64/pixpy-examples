@@ -21,8 +21,8 @@ def make_z_mat(a: float):
                      [0, 0, 1]])
 
 
-screen = pix.open_display(size=(1280, 720))
-#screen = pix.open_display(full_screen=True)
+#screen = pix.open_display(size=(1280, 720))
+screen = pix.open_display(full_screen=True)
 
 vertices = np.array([[1, 1, 1],
                      [1, 1, -1],
@@ -52,11 +52,10 @@ quads = np.array([
 screen.line_width = 2
 screen.fps = 0
 
-font = pix.load_font("data/Hack.ttf")
-text = font.make_image("THIS IS A CUBE. IT IS BLUE", 50)
+text = pix.Font.UNSCII_FONT.make_image("THIS IS A CUBE. IT IS BLUE", 16)
 print(text.width)
 
-sz = screen.size / 2
+sz = screen.size / 3
 planes = [pix.Image(size=sz) for _ in range(3)]
 c = 0xffffffff
 for i,plane in enumerate(planes):
@@ -66,13 +65,13 @@ for i,plane in enumerate(planes):
     plane.draw_color = 0xffffffff
     plane.point_size = 1
     for y in range(plane.size.toi().y//3):
-        #plane.plot(center=pix.Float2(random.randint(0,screen.size.toi().x), y*3+i), color=c)
         plane.set_pixel((random.randint(0,screen.size.toi().x), y*3+i), c)
 
 
 while pix.run_loop():
 
     screen.clear()
+
     fc = screen.frame_counter
     center = screen.size / 2
     screen.draw_color = 0xffffffff
@@ -99,5 +98,5 @@ while pix.run_loop():
         screen.polygon([p[x] for x in q])
 
     screen.draw_color = 0xffffffff
-    screen.draw(image=text, top_left=screen.size - (fc, 70))
+    screen.draw(image=text, top_left=screen.size - (fc*2, 92), size=text.size * 6)
     screen.swap()
