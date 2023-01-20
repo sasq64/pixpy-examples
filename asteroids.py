@@ -7,7 +7,7 @@ from pixpy import Float2
 import math
 import random
 from typing import Any
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -23,7 +23,7 @@ class Sprite:
     pos: Float2
     "Current position of sprite."
 
-    velocity: Float2 = Float2.ZERO
+    velocity: Float2 = field(default_factory=pix.Float2)
     "Veolicity of sprite."
 
     rotation: float = 0
