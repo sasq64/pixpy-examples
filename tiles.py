@@ -195,8 +195,7 @@ class TileEditor:
             self.screen.draw_color = pix.color.RED
             pos = Float2(0, self.screen.size.y - self.dialog.tile_size.y)
             self.screen.filled_rect(top_left=pos - (2, 2),
-                                    size=(self.dialog.grid_size *
-                                          self.dialog.tile_size) + 4)
+                                    size= (self.dialog.grid_size * self.dialog.tile_size) + 4)
             self.dialog.render(self.screen.context, pos=pos)
 
         if not self.filling:

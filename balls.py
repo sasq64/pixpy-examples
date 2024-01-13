@@ -15,7 +15,7 @@ class Ball:
 rnd = random.random
 
 screen = pix.open_display(size=(1280, 720))
-img = pix.Image(64*2, 64*2  )
+img = pix.Image(size=(64*2, 64*2))
 img.filled_circle(center=img.size/2, radius=img.size.x/2-1)
 
 balls = [Ball(pos=screen.size/2,

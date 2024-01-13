@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+#
+# Solid cube with starfield - example for pixpy
+
 import pixpy as pix
 import numpy as np
 import random
@@ -52,16 +56,12 @@ quads = np.array([
 screen.line_width = 2
 screen.fps = 0
 
-text = pix.Font.UNSCII_FONT.make_image("THIS IS A CUBE. IT IS BLUE", 16)
-print(text.width)
-
 sz = screen.size / 3
 planes = [pix.Image(size=sz) for _ in range(3)]
 c = 0xffffffff
 for i,plane in enumerate(planes):
     v = (i+1) / 3;
     c = pix.rgba(v, v, v, 1)
-    print(f"{c:x}")
     plane.draw_color = 0xffffffff
     plane.point_size = 1
     for y in range(plane.size.toi().y//3):
@@ -72,15 +72,19 @@ while pix.run_loop():
 
     screen.clear()
 
-    fc = screen.frame_counter
-    center = screen.size / 2
-    screen.draw_color = 0xffffffff
-    t = screen.seconds
-    for i,plane in enumerate(planes):
-        x = (fc * (i + 1)) % screen.size.toi().x
-        screen.draw(image=plane, top_left=pix.Float2(x, 0), size=screen.size)
-        screen.draw(image=plane, top_left=pix.Float2(x - screen.size.x, 0), size=screen.size)
 
+    # Star field
+    fc = screen.frame_counter
+    screen.draw_color = pix.color.WHITE
+    for i,plane in enumerate(planes):
+        x = (fc * (i + 1)) % screen.size.x
+        screen.draw(image=plane, top_left=(x, 0), size=screen.size)
+        screen.draw(image=plane, top_left=(x - screen.size.x, 0), size=screen.size)
+
+
+    # Cube
+    t = screen.seconds
+    center = screen.size / 2
     xa = t * 0.8
     ya = t * 0.2
     za = t * 0.05
@@ -94,9 +98,8 @@ while pix.run_loop():
 
     for i, q in enumerate(quads):
         c = -norms[i][2]
-        screen.draw_color = pix.rgba(0, 0, c, 1)
-        screen.polygon([p[x] for x in q])
+        if c > 0 :
+            screen.draw_color = pix.rgba(0, 0, c, 1)
+            screen.polygon([p[x] for x in q])
 
-    screen.draw_color = 0xffffffff
-    screen.draw(image=text, top_left=screen.size - (fc*2, 92), size=text.size * 6)
     screen.swap()

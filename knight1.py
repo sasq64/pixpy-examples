@@ -25,5 +25,5 @@ while pix.run_loop():
 
     frame = (pos.x // 10) % 10
     img = sheet[frame]
-    screen.draw(image=img, center=pos.tof(), size=img.size*dir)
+    screen.draw(image=img, center=pos, size=img.size*dir)
     screen.swap()

@@ -24,7 +24,7 @@ class Sprite:
     "Current position of sprite."
 
     velocity: Float2 = field(default_factory=pix.Float2)
-    "Veolicity of sprite."
+    "Velocity of sprite."
 
     rotation: float = 0
     "Rotation of sprite in radians."
@@ -92,7 +92,7 @@ class Asteroids:
 
         self.ship.pos = self.screen_size / 2
         self.asteroid_count = 4
-        "Number of asteroids to spawn when screen is clearered."
+        "Number of asteroids to spawn when screen is cleared."
 
         self.lives = 3
         self.respawn_at = -1

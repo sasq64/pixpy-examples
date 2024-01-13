@@ -9,7 +9,6 @@ def main():
     while pix.run_loop():
         for e in pix.all_events():
             if isinstance(e, pix.event.Text):
-                print(e.text)
                 con.write(f"\nHello {e.text}")
                 con.read_line()
 
