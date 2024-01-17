@@ -23,21 +23,25 @@ def make_z_mat(a: float):
                      [0, 0, 1]])
 
 
-vertices = np.array([[1, 1, 1],
-                     [1, 1, -1],
-                     [1, -1, 1],
-                     [1, -1, -1],
-                     [-1, 1, 1],
-                     [-1, 1, -1],
-                     [-1, -1, 1],
-                     [-1, -1, -1]])
+vertices = np.array([
+    [1, 1, 1],
+    [1, 1, -1],
+    [1, -1, 1],
+    [1, -1, -1],
+    [-1, 1, 1],
+    [-1, 1, -1],
+    [-1, -1, 1],
+    [-1, -1, -1]
+])
 
-normals = np.array([[1, 0, 0],
-                    [-1, 0, 0],
-                    [0, 1, 0],
-                    [0, -1, 0],
-                    [0, 0, 1],
-                    [0, 0, -1]])
+normals = np.array([
+    [1, 0, 0],
+    [-1, 0, 0],
+    [0, 1, 0],
+    [0, -1, 0],
+    [0, 0, 1],
+    [0, 0, -1]
+])
 
 quads = np.array([
     [3, 2, 0, 1],
@@ -58,7 +62,6 @@ planes = [pix.Image(size=sz) for _ in range(3)]
 for i,plane in enumerate(planes):
     v = (i+1) / 3;
     c = pix.rgba(v, v, v, 1)
-    plane.draw_color = 0xffffffff
     for y in range(plane.size.toi().y//3):
         plane.set_pixel((random.randint(0,screen.size.toi().x), y*3+i), c)
 

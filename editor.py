@@ -25,6 +25,7 @@ class TextEdit:
             font = pix.TileSet(pix.Font.UNSCII_FONT)
 
         self.rows = rows
+        self.dirty = True
         self.cols = cols
         self.con = pix.Console(rows=rows, cols=cols, tile_set=font)
         self.con.cursor_on = True
@@ -75,6 +76,7 @@ class TextEdit:
         self.ypos = 0
         self.xpos = 0
         self.line = self.lines[0]
+        self.dirty = True
 
     def next_word(self):
         x = self.xpos
@@ -186,8 +188,10 @@ class TextEdit:
             if isinstance(e, pix.event.Text):
                 self.line.insert(self.xpos, e.text)
                 self.xpos += len(e.text)
+                self.dirty = True
             if isinstance(e, pix.event.Key):
                 self.handle_key(e.key, e.mods)
+                self.dirty = True
         self.wrap_cursor()
 
     def set_color(self, fg, bg):
@@ -195,23 +199,32 @@ class TextEdit:
         self.bg = bg;
 
     def render(self, context: pix.Context):
-        self.xpos = clamp(self.xpos, 0, len(self.line) + 1)
-        self.con.clear()
-        for y in range(self.rows):
-            i = y + self.scroll_pos
-            if i >= len(self.lines):
-                break
-            self.con.cursor_pos = (0, y)
-            self.con.write(self.lines[i])
+        if self.dirty:
+            self.dirty = False
+            self.xpos = clamp(self.xpos, 0, len(self.line) + 1)
+            self.con.set_color(self.fg, self.bg)
+            self.con.clear()
+            for y in range(self.rows):
+                i = y + self.scroll_pos
+                if i >= len(self.lines):
+                    break
+                for s in self.lines[i]:
+                    if s == '#':
+                        self.con.set_color(0x8080ffff, self.bg)
+                    elif s != ' ':
+                        break
+                self.con.cursor_pos = (0, y)
+                self.con.write(self.lines[i])
+                self.con.set_color(self.fg, self.bg)
 
-        self.con.cursor_pos = (0, self.rows-1)
-        self.con.set_color(pix.color.WHITE, pix.color.BLUE)
-        self.con.write(f" LINE {self.ypos + 1} COL {self.xpos + 1} " + " " * (self.cols - 14))
-        self.con.set_color(self.fg, self.bg)
+            self.con.cursor_pos = (0, self.rows-1)
+            self.con.set_color(pix.color.WHITE, pix.color.BLUE)
+            self.con.write(f" LINE {self.ypos + 1} COL {self.xpos + 1} " + " " * (self.cols - 14))
+            self.con.set_color(self.fg, self.bg)
 
-        # If current line is visible, move the cursor to the edit position
-        if self.ypos >= self.scroll_pos:
-            self.con.cursor_pos = (self.xpos, self.ypos - self.scroll_pos)
+            # If current line is visible, move the cursor to the edit position
+            if self.ypos >= self.scroll_pos:
+                self.con.cursor_pos = (self.xpos, self.ypos - self.scroll_pos)
 
         self.con.render(context, size = context.size)
 

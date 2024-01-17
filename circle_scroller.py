@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 
 import pixpy as pix
 from typing import Dict

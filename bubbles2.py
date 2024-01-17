@@ -1,6 +1,5 @@
 import pixpy as pix
 import math
-from typing import Tuple, cast
 
 screen = pix.open_display(size=(1280, 720))
 
@@ -14,7 +13,7 @@ screen.point_size = 2.0
 font = pix.load_font("data/hyperspace_bold.ttf")
 logo = font.make_image("65000 plots", 60)
 while pix.run_loop():
-    (cx, cy) = cast(Tuple[int, int], screen.size / 2)
+    (cx, cy) = screen.size / 2
     s = screen.size.y / 5
     screen.clear()
     screen.point_size = screen.size.y / 400

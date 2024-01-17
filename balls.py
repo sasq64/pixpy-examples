@@ -19,10 +19,10 @@ img = pix.Image(size=(64*2, 64*2))
 img.filled_circle(center=img.size/2, radius=img.size.x/2-1)
 
 balls = [Ball(pos=screen.size/2,
-              vel=Float2.from_angle(rnd() * math.pi * 2) * (rnd() + 0.01) * 3,
+              vel=Float2.from_angle(rnd() * math.pi * 2) * (rnd() + 0.025) * 3,
               color=pix.rgba(rnd(), rnd(), rnd(), 0.5)) for _ in range(1000)]
 
-m = img.size
+margin = img.size
 s = 0.0
 while pix.run_loop():
     screen.clear()
@@ -33,7 +33,7 @@ while pix.run_loop():
         screen.draw(image=img, center=ball.pos, size=img.size * (math.sin(p) + 2.0) * 0.25)
         p += 0.1
         ball.pos += ball.vel
-        d = ball.pos.clip(Float2.ZERO - m, screen.size + m)
+        d = ball.pos.clip(Float2.ZERO - margin, screen.size + margin)
         if d != Float2.ZERO:
-            ball.pos -= (screen.size + m*2) * d.sign()
+            ball.pos -= (screen.size + margin*2) * d.sign()
     screen.swap()
