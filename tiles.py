@@ -10,8 +10,8 @@ tiles = pix.load_png("data/mono_tiles.png").split(size=tile_size)
 for i, tile in enumerate(tiles):
     con.get_image_for(1024 + i).copy_from(tile)
 
-if os.path.exists("tiles.dat"):
-    with open("tiles.dat", "rb") as f:
+if os.path.exists("data/tiles.dat"):
+    with open("data/tiles.dat", "rb") as f:
         data = f.read()
         unpacked = list(struct.unpack(f'{len(data) // 4}I', data))
         con.set_tiles(unpacked)

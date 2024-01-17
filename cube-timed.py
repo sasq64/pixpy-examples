@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-#
 # Solid cube with starfield - example for pixpy
 
 import pixpy as pix
@@ -25,9 +23,6 @@ def make_z_mat(a: float):
                      [0, 0, 1]])
 
 
-#screen = pix.open_display(size=(1280, 720))
-screen = pix.open_display(full_screen=True)
-
 vertices = np.array([[1, 1, 1],
                      [1, 1, -1],
                      [1, -1, 1],
@@ -45,25 +40,25 @@ normals = np.array([[1, 0, 0],
                     [0, 0, -1]])
 
 quads = np.array([
-    [1, 0, 2, 3],
-    [4, 5, 7, 6],
-    [0, 1, 5, 4],
-    [2, 6, 7, 3],
-    [0, 4, 6, 2],
-    [1, 3, 7, 5]
+    [3, 2, 0, 1],
+    [6, 7, 5, 4],
+    [4, 5, 1, 0],
+    [3, 7, 6, 2],
+    [2, 6, 4, 0],
+    [5, 7, 3, 1]
 ])
 
-screen.line_width = 2
+#screen = pix.open_display(size=(1280, 720))
+screen = pix.open_display(full_screen=True)
 screen.fps = 0
 
+# Create starfield
 sz = screen.size / 3
 planes = [pix.Image(size=sz) for _ in range(3)]
-c = 0xffffffff
 for i,plane in enumerate(planes):
     v = (i+1) / 3;
     c = pix.rgba(v, v, v, 1)
     plane.draw_color = 0xffffffff
-    plane.point_size = 1
     for y in range(plane.size.toi().y//3):
         plane.set_pixel((random.randint(0,screen.size.toi().x), y*3+i), c)
 
@@ -72,8 +67,7 @@ while pix.run_loop():
 
     screen.clear()
 
-
-    # Star field
+    # Render starfield
     fc = screen.frame_counter
     screen.draw_color = pix.color.WHITE
     for i,plane in enumerate(planes):
@@ -81,8 +75,7 @@ while pix.run_loop():
         screen.draw(image=plane, top_left=(x, 0), size=screen.size)
         screen.draw(image=plane, top_left=(x - screen.size.x, 0), size=screen.size)
 
-
-    # Cube
+    # Render cube
     t = screen.seconds
     center = screen.size / 2
     xa = t * 0.8
@@ -100,6 +93,6 @@ while pix.run_loop():
         c = -norms[i][2]
         if c > 0 :
             screen.draw_color = pix.rgba(0, 0, c, 1)
-            screen.polygon([p[x] for x in q])
+            screen.polygon([p[x] for x in q], convex = True)
 
     screen.swap()

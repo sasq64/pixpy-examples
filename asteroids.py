@@ -59,11 +59,7 @@ class Sprite:
         image = pix.Image(size)
         image.clear(pix.color.TRANSP)
         image.line_width = 1
-        last = points[0]
-        for p in points:
-            image.line(start=last, end=p)
-            last = p
-        image.line(start=last, end=points[0])
+        image.lines(points + [points[0]])
         return Sprite(image, pos=Float2.ZERO)
 
 
