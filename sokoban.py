@@ -11,13 +11,26 @@ FLOOR = 13*6+11
 WALL = 6*13+9
 GOAL_BOX = 9+4*13
 
-ZERO = pix.Float2.ZERO
 @dataclass
 class Sprite:
     pos: pix.Float2
+    screen_pos: pix.Float2
     img: pix.Image
     vel: pix.Float2 = field(default_factory=pix.Float2) 
     count: int = 0
+    
+    def move_to(self, target: pix.Float2):
+        self.pos = target
+        self.vel = (target - self.screen_pos) / 8 
+        self.count = 8
+
+    def update(self):
+        if self.count > 0:
+            self.screen_pos += self.vel
+            self.count -= 1
+            if self.count == 0:
+                self.screen_pos = self.pos
+
 
 class Sokoban:
     def load_levels(self, fn):
@@ -49,52 +62,83 @@ class Sokoban:
         self.tile_size = pix.Float2(64, 64)
 
         self.con = pix.Console(cols=20, rows=20, tile_size=self.tile_size)
+        self.con.set_color(pix.color.WHITE, 0x779699ff)
         tiles = pix.load_png("data/sokoban_tilesheet.png").split(size=self.tile_size)
         for i, tile in enumerate(tiles):
             self.con.get_image_for(256 + i).copy_from(tile)
 
         self.load_levels("data/sokoban_levels.txt")
-        level = self.levels[0]
+        self.level = self.levels[1]
+        self.set_level()
+
+    def set_level(self):
+        self.con.clear()
+        level = self.level
+        self.correct = 0
         pos = pix.Int2(0,0)
         sprites : list[Sprite] = []
+        self.boxes : list[Sprite] = []
         for line in level:
             pos = pix.Int2(0, pos.y + 1)
             for (tile,item) in line:
                 if item != 0:
-                    sprite = Sprite(pos.tof(), self.con.get_image_for(256+item))
+                    sprite = Sprite(pos.tof(), pos.tof(), self.con.get_image_for(256+item))
                     sprites.append(sprite)
                     if item == PLAYER:
                         self.player = sprite
+                    elif item == BOX:
+                        self.boxes.append(sprite)
                 self.con.put(pos, tile + 256)
                 pos += (1, 0)
         self.sprites = sprites
+
 
     def run(self):
         while pix.run_loop():
             self.screen.draw(self.con)
             for sprite in self.sprites:
+                sprite.update()
+                self.screen.draw(sprite.img, sprite.screen_pos * self.tile_size)
 
-                self.screen.draw(sprite.img, sprite.pos * self.tile_size)
-                if sprite.count > 0:
-                    sprite.pos += sprite.vel
-                    sprite.count -= 1
-                    if sprite.count == 0:
-                        sprite.pos = sprite.pos.round()
-
-            target = pix.Float2.ZERO
+            delta = pix.Float2.ZERO
+            if pix.was_pressed(pix.key.RIGHT):
+                delta = pix.Float2(1, 0)
+            if pix.was_pressed(pix.key.DOWN):
+                delta = pix.Float2(0, 1)
             if pix.was_pressed(pix.key.LEFT):
-                target = self.player.pos + (-1, 0)
+                delta = pix.Float2(-1, 0)
             if pix.was_pressed(pix.key.UP):
-                target = self.player.pos + (0, -1)
+                delta = pix.Float2(0, -1)
+            if pix.was_pressed(pix.key.F1):
+                self.set_level()
 
-            if target != pix.Float2.ZERO:
+            if delta != pix.Float2.ZERO:
+                target = self.player.pos + delta
                 tile = self.con.get(target.toi()) 
-                if tile == BOX + 256:
-                    pass
-
+                move = True
+                self.correct = 0
                 if tile != WALL + 256:
-                    self.player.vel = (target - self.player.pos) / 8 
-                    self.player.count = 8
+                    for box in self.boxes:
+                        if self.con.get(box.pos.toi()) == GOAL + 256:
+                            self.correct += 1
+                        if box.pos == target:
+                            box_target = box.pos + delta
+                            for box2 in self.boxes:
+                                if box2.pos == box_target:
+                                    move = False
+                                    break
+                            box_tile = self.con.get(box_target.toi())
+                            if box_tile == WALL + 256:
+                                move = False
+                            if move:
+                                box.move_to(box.pos + delta)
+                                if self.con.get(box.pos.toi()) == GOAL + 256:
+                                    self.correct += 1
+                    if move:
+                        self.player.move_to(target)
+            img = pix.Font.UNSCII_FONT.make_image(f"{self.correct}/{len(self.boxes)}", 16*4)
+            self.screen.draw(img)
+
             self.screen.swap()
         
 

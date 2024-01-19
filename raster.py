@@ -23,5 +23,5 @@ while pix.run_loop():
         s += 0.3
     tex = pix.Image(1, colors)
 
-    screen.draw(tex, top_left=(0,0), size=screen.size)
+    screen.draw(tex, center=screen.size/2, size=screen.size*2, rot=screen.frame_counter/500)
     screen.swap()

@@ -16,6 +16,7 @@ if os.path.exists("data/tiles.dat"):
         unpacked = list(struct.unpack(f'{len(data) // 4}I', data))
         con.set_tiles(unpacked)
 
+con.put((10,10), 1025)
 offset = pix.Float2(0,0)
 
 while pix.run_loop():

@@ -1,5 +1,4 @@
 import os
-import math
 import struct
 import pixpy as pix
 from pixpy import Float2
