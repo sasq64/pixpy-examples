@@ -14,13 +14,13 @@ def clamp(v: Any, lo: Any, hi: Any):
 
 class TextEdit:
 
-    def __init__(self, font = None, cols = 120, rows = 50):
+    def __init__(self, font : pix.TileSet | None = None, cols: int = 120, rows: int = 50):
         self.lines : List[List[str] ]= [[]]
         self.line = self.lines[0]
         self.scroll_pos = 0
         self.xpos = 0
         self.ypos = 0
-        self.yank = []
+        self.yank: List[str] = []
         if font == None:
             font = pix.TileSet(pix.Font.UNSCII_FONT)
 
@@ -68,7 +68,7 @@ class TextEdit:
     def get_text(self):
         return "\n".join(["".join(l) for l in self.lines])
 
-    def set_text(self, text):
+    def set_text(self, text: str):
         lines = text.split("\n")
         self.lines = [[]]
         for line in lines:
@@ -194,7 +194,7 @@ class TextEdit:
                 self.dirty = True
         self.wrap_cursor()
 
-    def set_color(self, fg, bg):
+    def set_color(self, fg: int, bg: int):
         self.fg = fg;
         self.bg = bg;
 

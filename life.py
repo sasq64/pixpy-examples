@@ -5,9 +5,8 @@ import pixpy as pix
 def main():
     screen = pix.open_display(width=1280, height=720)
     con = pix.Console(cols=160, rows=90)
-    cols = con.grid_size.x
-    rows = con.grid_size.y
-    con.set_color(pix.color.YELLOW, pix.color.BLACK)
+    cols,rows = con.grid_size
+    con.fg_color = pix.color.YELLOW
 
     counts = [0] * (cols * rows + cols + 1)
     board = [0] * (cols * rows + cols + 1)

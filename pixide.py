@@ -1,10 +1,10 @@
 import os.path
-import traceback
+#import traceback
 from pathlib import Path
 import pixpy as pix
 from editor import TextEdit
 
-def info_box(text):
+def info_box(text: str):
 
     lines = text.split("\n")
     maxl = len(max(lines, key=lambda l: len(l)))
@@ -18,7 +18,7 @@ def info_box(text):
     screen.filled_rect(top_left=xy, size=psz)
     screen.draw(con, top_left = xy + (4,4))
 
-def run(source):
+def run(source: str):
     screen.clear(0x2020a0ff)
     screen.swap()
     try:
@@ -47,7 +47,7 @@ def main():
     workFile = Path.home() / '.pixwork.py'
     if os.path.isfile(workFile):
         with open(workFile) as f:
-            if f.readable :
+            if f.readable() :
                 text = f.read()
                 edit.set_text(text)
     while pix.run_loop():

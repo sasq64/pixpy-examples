@@ -1,6 +1,3 @@
-
-import os
-import struct
 from dataclasses import dataclass, field
 import pixpy as pix
 
@@ -32,22 +29,24 @@ class Sprite:
                 self.screen_pos = self.pos
 
 
-class Sokoban:
-    def load_levels(self, fn):
+Tile = tuple[int, int]
 
-        block_map = {
-            '#': [WALL,0],
-            ' ': [FLOOR,0],
-            '$': [FLOOR, BOX],
-            '.': [GOAL,0],
-            '*': [GOAL,BOX],
-            '@': [FLOOR,PLAYER],
-            '+': [GOAL,PLAYER]
+class Sokoban:
+    def load_levels(self, fn: str):
+
+        block_map  : dict[str, Tile]= {
+            '#': (WALL,0),
+            ' ': (FLOOR,0),
+            '$': (FLOOR, BOX),
+            '.': (GOAL,0),
+            '*': (GOAL,BOX),
+            '@': (FLOOR,PLAYER),
+            '+': (GOAL,PLAYER)
         }
 
-        self.levels = []
+        self.levels : list[list[list[Tile]]] = []
 
-        level = []
+        level : list[list[Tile]] = []
         with open(fn, "r") as f:
             for line in f.readlines():
                 if line[0] == ';':
@@ -68,7 +67,7 @@ class Sokoban:
             self.con.get_image_for(256 + i).copy_from(tile)
 
         self.load_levels("data/sokoban_levels.txt")
-        self.level = self.levels[1]
+        self.level = self.levels[2]
         self.set_level()
 
     def set_level(self):
