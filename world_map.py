@@ -1,8 +1,8 @@
 import sys
 import pixpy as pix
 import json
-from collections.abc import Iterable
-from dataclasses import dataclass
+#from collections.abc import Iterable
+#from dataclasses import dataclass
 
 class Country:
     def __init__(self):
@@ -16,7 +16,7 @@ class Country:
     iso2: str
     highlight: int
 
-def bbox(points):
+def bbox(points : list[pix.Float2]) -> tuple[pix.Float2, pix.Float2]:
     max_x,max_y = sys.float_info.min, sys.float_info.min
     min_x,min_y = sys.float_info.max, sys.float_info.max 
     for p in points:
@@ -34,8 +34,8 @@ def read_geo() -> list[Country]:
             t = f['geometry']['type']
             multi = t != "Polygon"
             coords = f['geometry']['coordinates']
-            polys = []
-            box = []
+            polys : list[list[pix.Float2]] = []
+            box : list[pix.Float2]= []
             for c in coords:
                 if multi:
                     c2 = c[0]

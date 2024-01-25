@@ -41,7 +41,6 @@ stack : list[UIContext] = []
 texts = Cache[pix.Image]()
 
 font : pix.Font = pix.load_font("data/Impact.ttf")
-print(font)
 
 def start(context: pix.Context):
     global stack
@@ -111,7 +110,7 @@ def grid(id: str, images: list[pix.Image], size: Int2):
     if pix.was_pressed(pix.key.LEFT_MOUSE):
         xy = pix.get_pointer()
         if xy > pos and xy < (pixel_size + pos):
-            p = ((xy -pos) / g.con.tile_size).toi()
+            p = ((xy-pos) / g.con.tile_size).toi()
             g.selected = p.y * g.con.grid_size.x + p.x
     if pix.was_pressed(pix.key.RIGHT):
         xy = pix.get_pointer()
@@ -123,6 +122,10 @@ class Selectable:
     index = 0
 
 state = Cache[Selectable](Selectable) 
+
+def begin_list(id: str):
+    c = push_context()
+
 
 def text_list(id: str, lines: list[str] ):
 

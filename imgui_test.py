@@ -12,6 +12,7 @@ tiles = pix.load_png('data/sokoban_tilesheet.png').split((64,64))
 while pix.run_loop():
     screen.clear()
     imgui.start(screen.context)
+    
     with imgui.begin_window("Buttons"):
         if imgui.button("Click me"):
             print("CLICKED")
