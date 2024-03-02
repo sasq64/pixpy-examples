@@ -21,8 +21,6 @@ while pix.run_loop():
     imgui.text_list("x", [ "Hello", "Good bye", "Get away!"])
 
     with imgui.begin_window("Grid"):
-        # A grid is a console displaying images that you can select.
-        # You can pass all images in or use it as a scope w
         imgui.grid("g", tiles, Int2(10, 10))
 
     screen.swap()
