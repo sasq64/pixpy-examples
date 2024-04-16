@@ -64,7 +64,7 @@ class SnakeGame:
 
             self.con.cursor_pos = (2,0)
             self.con.write(f"SCORE {self.score}")
-            self.con.render(self.screen.context, size=self.screen.size)
+            self.screen.draw(self.con, size=self.screen.size)
             self.screen.swap()
 
     def make_apple(self):

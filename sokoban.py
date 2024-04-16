@@ -67,7 +67,7 @@ class Sokoban:
             self.con.get_image_for(256 + i).copy_from(tile)
 
         self.load_levels("data/sokoban_levels.txt")
-        self.level = self.levels[2]
+        self.level = self.levels[0]
         self.set_level()
 
     def set_level(self):

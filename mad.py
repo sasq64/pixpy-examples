@@ -131,21 +131,11 @@ mad = [
 
 screen = pix.open_display(width=1280, height=720)
 
-def render():
-    screen.clear()
-    offset = screen.size / 2
-    h = screen.size.y
-    scale = Float2(h / 180, h / 180)
+offset = screen.size / 2
+h = screen.size.y
+scale = Float2(h / 180, h / 180)
 
-    for i in range(0, len(mad), 4):
-        p0 = Float2(mad[i], -mad[i + 1])
-        p1 = Float2(mad[i + 2], -mad[i + 3])
-        screen.line(start=p0 * scale + offset, end=p1 * scale + offset)
-    screen.swap()
-
-render()
-while pix.run_loop():
-    for e in pix.all_events():
-        if isinstance(e, pix.event.Resize):
-            render()
-
+for i in range(0, len(mad), 4):
+    p0 = Float2(mad[i], -mad[i + 1])
+    p1 = Float2(mad[i + 2], -mad[i + 3])
+    screen.line(start=p0 * scale + offset, end=p1 * scale + offset)

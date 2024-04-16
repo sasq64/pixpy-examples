@@ -23,7 +23,7 @@ balls = [Ball(pos=screen.size/2,
               color=pix.rgba(rnd(), rnd(), rnd(), 0.5)) for _ in range(1000)]
 
 margin = img.size
-s = 0.0
+s = 0.0 
 while pix.run_loop():
     screen.clear()
     p = s

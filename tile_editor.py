@@ -184,19 +184,21 @@ class TileEditor:
 
     def render(self):
         self.screen.clear(pix.color.BLUE)
-        self.con.render(self.screen.context, self.offset, self.tile_size *
+        self.screen.draw(self.con, top_left=self.offset, size=self.tile_size *
                         self.con.grid_size * self.zoom)
+        #self.con.render(self.screen.context, self.offset, self.tile_size *
+        #                self.con.grid_size * self.zoom)
         self.render_tile_panel(self.screen)
         self.render_colors(self.screen)
 
-        self.info.render(self.screen.context, (0, self.screen.height - 11 * 16))
+        self.screen.draw(self.info, top_left=(0, self.screen.height - 11 * 16))
 
         if self.dialog:
             self.screen.draw_color = pix.color.RED
             pos = Float2(0, self.screen.size.y - self.dialog.tile_size.y)
             self.screen.filled_rect(top_left=pos - (2, 2),
                                     size= (self.dialog.grid_size * self.dialog.tile_size) + 4)
-            self.dialog.render(self.screen.context, pos=pos)
+            self.screen.draw(self.dialog, top_left=pos)
 
         if not self.filling:
             return

@@ -226,7 +226,7 @@ class TextEdit:
             if self.ypos >= self.scroll_pos:
                 self.con.cursor_pos = (self.xpos, self.ypos - self.scroll_pos)
 
-        self.con.render(context, size = context.size)
+        context.draw(self.con, size = context.size)
 
 
 def main():

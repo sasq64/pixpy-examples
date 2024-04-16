@@ -2,7 +2,7 @@ import pixpy as pix
 
 def main():
     screen = pix.open_display(width=1280, height=720)
-    con = pix.Console(cols=100, rows=45)
+    con = pix.Console(cols=1280//16, rows=720//32)
 
     con.write('What is your name?\n')
     con.read_line()

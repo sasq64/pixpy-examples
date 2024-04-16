@@ -24,36 +24,20 @@ def make_z_mat(a: float):
 
 
 vertices = np.array([
-    [1, 1, 1],
-    [1, 1, -1],
-    [1, -1, 1],
-    [1, -1, -1],
-    [-1, 1, 1],
-    [-1, 1, -1],
-    [-1, -1, 1],
-    [-1, -1, -1]
+    [1, 1, 1], [1, 1, -1], [1, -1, 1], [1, -1, -1],
+    [-1, 1, 1], [-1, 1, -1], [-1, -1, 1], [-1, -1, -1]
 ])
 
 normals = np.array([
-    [1, 0, 0],
-    [-1, 0, 0],
-    [0, 1, 0],
-    [0, -1, 0],
-    [0, 0, 1],
-    [0, 0, -1]
-])
+    [1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0],
+    [0, 0, 1], [0, 0, -1] ])
 
 quads = np.array([
-    [3, 2, 0, 1],
-    [6, 7, 5, 4],
-    [4, 5, 1, 0],
-    [3, 7, 6, 2],
-    [2, 6, 4, 0],
-    [5, 7, 3, 1]
+    [3, 2, 0, 1], [6, 7, 5, 4], [4, 5, 1, 0],
+    [3, 7, 6, 2], [2, 6, 4, 0], [5, 7, 3, 1]
 ])
 
-#screen = pix.open_display(size=(1280, 720))
-screen = pix.open_display(full_screen=True)
+screen = pix.open_display(size=(1280, 720))
 screen.fps = 0
 
 # Create starfield
@@ -63,7 +47,7 @@ for i,plane in enumerate(planes):
     v = (i+1) / 3;
     c = pix.rgba(v, v, v, 1)
     for y in range(plane.size.toi().y//3):
-        plane.set_pixel((random.randint(0,screen.size.toi().x), y*3+i), c)
+        plane.set_pixel((random.randint(0,plane.size.toi().x), y*3+i), c)
 
 
 while pix.run_loop():
