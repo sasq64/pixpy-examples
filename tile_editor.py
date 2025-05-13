@@ -82,7 +82,7 @@ class TileEditor:
     def update(self):
         for event in pix.all_events():
             match event:
-                case pix.event.Text(text):
+                case pix.event.Text(text = text):
                     if self.dialog:
                         self.dialog = None
                         continue
@@ -121,9 +121,9 @@ class TileEditor:
                         if t == 0:
                             t = 10
                         self.tile = (t - 1) + 10 * self.bank
-                case pix.event.Key(_):
+                case pix.event.Key():
                     pass
-                case pix.event.Click(pos):
+                case pix.event.Click(pos = pos):
                     if self.select_tile(pos):
                         continue
                     if self.select_color(pos):

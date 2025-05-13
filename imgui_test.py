@@ -16,7 +16,6 @@ while pix.run_loop():
     with imgui.begin_window("Buttons"):
         if imgui.button("Click me"):
             print("CLICKED")
-            pass
 
     imgui.text_list("x", [ "Hello", "Good bye", "Get away!"])
 

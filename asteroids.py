@@ -1,4 +1,4 @@
-""""
+"""
 Asteroids example for pixpy
 """
 
@@ -6,8 +6,8 @@ import pixpy as pix
 from pixpy import Float2
 import math
 import random
-from typing import Any
-from dataclasses import dataclass, field
+from enum import Enum
+from dataclasses import dataclass
 
 
 @dataclass
@@ -23,7 +23,7 @@ class Sprite:
     pos: Float2
     "Current position of sprite."
 
-    velocity: Float2 = field(default_factory=pix.Float2)
+    velocity: Float2 = Float2.ZERO
     "Velocity of sprite."
 
     rotation: float = 0
@@ -53,8 +53,11 @@ class Sprite:
                 self.dead = True
         target.draw(image=self.image, center=self.pos, rot=self.rotation)
 
+
+    F2 = Float2 | tuple[float, float]
+
     @staticmethod
-    def from_lines(size: Float2 | tuple[float, float], points: list[Any]):
+    def from_lines(size: Float2 | tuple[float, float], points: list[Float2] | list[tuple[float, float]]):
         """Create a sprite from lines"""
         image = pix.Image(size)
         image.clear(pix.color.TRANSP)
@@ -63,9 +66,7 @@ class Sprite:
         return Sprite(image, pos=Float2.ZERO)
 
 
-class Asteroids:
-    "An Asteroids game for pixpy."
-
+class State(Enum):
     PLAYING = 0
     "We are currently playing."
 
@@ -75,12 +76,14 @@ class Asteroids:
     GAME_OVER = 2
     "The game is over."
 
+class Asteroids:
+    "An Asteroids game for pixpy."
+
     def __init__(self, target: pix.Context):
         random.seed(19)
         self.target = target
         self.screen_size = target.size
-        self.ship = Sprite.from_lines((32, 32),
-                                      [(28, 16), (4, 8), (8, 16), (4, 24)])
+        self.ship = Sprite.from_lines((32, 32), [(28, 16), (4, 8), (8, 16), (4, 24)])
         "The player ship sprite"
 
         self.life_image = self.ship.image
@@ -94,19 +97,19 @@ class Asteroids:
         self.respawn_at = -1
         self.bullet = pix.Image((4, 4))
         self.bullet.filled_circle(center=(2, 2), radius=2)
-        self.bullets : list[Sprite] = []
-        self.game_state = Asteroids.PLAYING
+        self.bullets: list[Sprite] = []
+        self.game_state : State = State.PLAYING
         self.score = 0
         self.frame_counter = 0
-        self.font = pix.load_font('data/hyperspace_bold.ttf')
+        self.font = pix.load_font("data/hyperspace_bold.ttf")
         self.numbers = [
-            self.font.make_image(text=chr(0x30 + i), size=32,
-                                 color=pix.color.YELLOW)
-            for i in range(10)]
+            self.font.make_image(text=chr(0x30 + i), size=32, color=pix.color.YELLOW)
+            for i in range(10)
+        ]
         "Array of digit images used to render numbers."
 
         self.game_over = self.font.make_image("GAME_OVER", 48)
-        self.asteroids = []
+        self.asteroids: list[Sprite] = []
         "Current active asteroid sprites"
 
         self.spawn_asteroids()
@@ -116,14 +119,18 @@ class Asteroids:
         screen = self.target
         self.render_number(Float2(10, 10), self.score)
         for i in range(self.lives):
-            screen.draw(image=self.life_image, center=(i * 40 + 500, 30),
-                        size=self.life_image.size * 2, rot=-math.pi / 2)
+            screen.draw(
+                image=self.life_image,
+                center=(i * 40 + 500, 30),
+                size=self.life_image.size * 2,
+                rot=-math.pi / 2,
+            )
 
-        if self.game_state == Asteroids.GAME_OVER:
+        if self.game_state == State.GAME_OVER:
             screen.draw(image=self.game_over, center=self.screen_size / 2)
-        elif self.game_state == Asteroids.SHIP_RESPAWN:
+        elif self.game_state == State.SHIP_RESPAWN:
             if self.respawn_at == self.frame_counter:
-                self.game_state = Asteroids.PLAYING
+                self.game_state = State.PLAYING
         else:
             self.update_player()
             self.ship.render(screen)
@@ -135,7 +142,7 @@ class Asteroids:
             b.update()
             b.render(screen)
 
-        if self.game_state == Asteroids.PLAYING:
+        if self.game_state == State.PLAYING:
             self.collide_asteroids()
 
         self.bullets[:] = [b for b in self.bullets if not b.dead]
@@ -146,7 +153,7 @@ class Asteroids:
             self.spawn_asteroids()
         self.frame_counter += 1
 
-    def render_number(self, pos: Float2, value: int, digits: int=5):
+    def render_number(self, pos: Float2, value: int, digits: int = 5):
         """Render a number on the screen."""
         pos += (self.numbers[0].size.x * digits, 0)
         for _ in range(digits):
@@ -155,13 +162,16 @@ class Asteroids:
             self.target.draw(image=img, top_left=pos)
             pos -= (img.size.x, 0)
 
-    def create_asteroid(self, radius: float):
+    def create_asteroid(self, radius: float) -> Sprite:
         """Create a new asteroid with the given radius."""
         s = 10
         z = radius * 2 + radius / 1.5
-        points = [Float2.from_angle(i * math.pi * 2 / s)
-                  * (radius + ((i % 2) - 0.5) * random.random() * radius / 1.5)
-                  + (z / 2, z / 2) for i in range(s)]
+        points = [
+            Float2.from_angle(i * math.pi * 2 / s)
+            * (radius + ((i % 2) - 0.5) * random.random() * radius / 1.5)
+            + (z / 2, z / 2)
+            for i in range(s)
+        ]
         asteroid = Sprite.from_lines((z, z), points)
 
         asteroid.velocity = Float2.from_angle(random.random() * math.pi * 2)
@@ -175,9 +185,8 @@ class Asteroids:
 
     def fire_bullet(self):
         """Fire a bullet in the same direction the ship is rotated."""
-        self.bullets.append(
-            Sprite(self.bullet, self.ship.pos,
-                   Float2.from_angle(self.ship.rotation) * 5, 0, False))
+        vel = Float2.from_angle(self.ship.rotation) * 5.0
+        self.bullets.append(Sprite(self.bullet, self.ship.pos, vel, 0, False))
 
     def update_player(self):
         """Read the keyboard and update the player ship."""
@@ -186,13 +195,12 @@ class Asteroids:
             ship.rotation -= 0.05
         elif pix.is_pressed(pix.key.RIGHT):
             ship.rotation += 0.05
-        if pix.was_pressed('x'):
+        if pix.was_pressed("x"):
             self.fire_bullet()
 
         speed = 0.1
-        if pix.is_pressed('z'):
-            v = ship.velocity + Float2.from_angle(
-                ship.rotation) * speed
+        if pix.is_pressed("z"):
+            v = ship.velocity + Float2.from_angle(ship.rotation) * speed
             m = v.mag()
             if m > 2.2:
                 v = v / m * 2.2
@@ -202,8 +210,7 @@ class Asteroids:
 
     def spawn_asteroids(self):
         """Spawn new asteroids when all asteroids are destroyed."""
-        self.asteroids = [self.create_asteroid(40)
-                          for _ in range(self.asteroid_count)]
+        self.asteroids = [self.create_asteroid(40) for _ in range(self.asteroid_count)]
 
     def break_apart(self, sprite: Sprite):
         """Break sprite into two new sprites"""
@@ -217,20 +224,20 @@ class Asteroids:
         s1.pos = sprite.pos + s1.velocity * sprite.radius / 4
         return [s0, s1]
 
-    def collide_asteroids(self):
+    def collide_asteroids(self) -> None:
         """
         Iterate over all asteroids and see if they have collided with
         a bullet or the player ship.
         """
-        new_asteroids : list[Sprite] = []
+        new_asteroids: list[Sprite] = []
         for a in self.asteroids:
             if (self.ship.pos - a.pos).mag() < (a.radius + 10):
                 a.dead = True
                 self.lives -= 1
                 if self.lives == 0:
-                    self.game_state = Asteroids.GAME_OVER
+                    self.game_state = State.GAME_OVER
                 else:
-                    self.game_state = Asteroids.SHIP_RESPAWN
+                    self.game_state = State.SHIP_RESPAWN
                     self.respawn_at = self.frame_counter + 60
             for b in self.bullets:
                 if (b.pos - a.pos).mag() < a.radius:
@@ -243,7 +250,7 @@ class Asteroids:
 
 
 def main():
-    screen = pix.open_display(width=640 * 2, height=480 * 2)
+    screen = pix.open_display(size=(1280, 1024))
     game = Asteroids(screen.context)
 
     print(screen.size)

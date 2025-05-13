@@ -1,23 +1,24 @@
 import pixpy as pix
 import numpy as np
+import math
 
 
 def make_x_mat(a: float):
-    return np.array([[1, 0, 0],
-                    [0, np.cos(a), -np.sin(a)],
-                    [0, np.sin(a), np.cos(a)]])
+    return np.array([[1.0, 0.0, 0.0],
+                    [0.0, math.cos(a), -math.sin(a)],
+                    [0.0, math.sin(a), math.cos(a)]])
 
 
 def make_y_mat(a: float):
-    return np.array([[np.cos(a), 0, np.sin(a)],
-                     [0, 1, 0],
-                     [-np.sin(a), 0, np.cos(a)]])
+    return np.array([[math.cos(a), 0.0, math.sin(a)],
+                     [0.0, 1.0, 0.0],
+                     [-math.sin(a), 0.0, math.cos(a)]])
 
 
 def make_z_mat(a: float):
-    return np.array([[np.cos(a), -np.sin(a), 0],
-                     [np.sin(a), np.cos(a), 0],
-                     [0, 0, 1]])
+    return np.array([[math.cos(a), -math.sin(a), 0.0],
+                     [math.sin(a), math.cos(a), 0.0],
+                     [0.0, 0.0, 1.0]])
 
 
 screen = pix.open_display(size=(1280, 720))
@@ -28,11 +29,13 @@ xa = 0.0
 ya = 0.0
 za = 0.0
 
-vertices = np.array([[1, 1, 1], [1, 1, -1], [1, -1, 1], [1, -1, -1],
-                     [-1, 1, 1], [-1, 1, -1], [-1, -1, 1], [-1, -1, -1]])
+vertices = [[1, 1, 1], [1, 1, -1], [1, -1, 1], [1, -1, -1],
+            [-1, 1, 1], [-1, 1, -1], [-1, -1, 1], [-1, -1, -1]]
 
 lines = [(0, 1), (1, 3), (3, 2), (2, 0), (4, 5), (5, 7),
          (7, 6), (6, 4), (0, 4), (1, 5), (2, 6), (3, 7)]
+
+screen.line_width = 6
 
 while pix.run_loop():
 

@@ -2,25 +2,26 @@
 
 import pixpy as pix
 import numpy as np
+import math
 import random
 
 
-def make_x_mat(a: float):
-    return np.array([[1, 0, 0],
-                    [0, np.cos(a), -np.sin(a)],
-                    [0, np.sin(a), np.cos(a)]])
+def make_x_mat(a: float): 
+    return np.array([[1.0, 0.0, 0.0],
+                    [0.0, math.cos(a), -math.sin(a)],
+                    [0.0, math.sin(a), math.cos(a)]])
 
 
 def make_y_mat(a: float):
-    return np.array([[np.cos(a), 0, np.sin(a)],
-                     [0, 1, 0],
-                     [-np.sin(a), 0, np.cos(a)]])
+    return np.array([[math.cos(a), 0.0, math.sin(a)],
+                     [0.0, 1.0, 0.0],
+                     [-math.sin(a), 0.0, math.cos(a)]])
 
 
 def make_z_mat(a: float):
-    return np.array([[np.cos(a), -np.sin(a), 0],
-                     [np.sin(a), np.cos(a), 0],
-                     [0, 0, 1]])
+    return np.array([[math.cos(a), -math.sin(a), 0.0],
+                     [math.sin(a), math.cos(a), 0.0],
+                     [0.0, 0.0, 1.0]])
 
 
 vertices = np.array([
@@ -29,8 +30,9 @@ vertices = np.array([
 ])
 
 normals = np.array([
-    [1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0],
-    [0, 0, 1], [0, 0, -1] ])
+    [1, 0, 0], [-1, 0, 0], [0, 1, 0],
+    [0, -1, 0], [0, 0, 1], [0, 0, -1]
+])
 
 quads = np.array([
     [3, 2, 0, 1], [6, 7, 5, 4], [4, 5, 1, 0],
@@ -44,21 +46,20 @@ screen.fps = 0
 sz = screen.size / 3
 planes = [pix.Image(size=sz) for _ in range(3)]
 for i,plane in enumerate(planes):
-    v = (i+1) / 3;
+    v = (i+1) / 3
     c = pix.rgba(v, v, v, 1)
     for y in range(plane.size.toi().y//3):
         plane.set_pixel((random.randint(0,plane.size.toi().x), y*3+i), c)
 
-
+print(screen.refresh_rate)
 while pix.run_loop():
 
     screen.clear()
 
     # Render starfield
-    fc = screen.frame_counter
     screen.draw_color = pix.color.WHITE
     for i,plane in enumerate(planes):
-        x = (fc * (i + 1)) % screen.size.x
+        x = (screen.seconds * 50 * (i + 1)) % screen.size.x
         screen.draw(image=plane, top_left=(x, 0), size=screen.size)
         screen.draw(image=plane, top_left=(x - screen.size.x, 0), size=screen.size)
 
@@ -73,7 +74,7 @@ while pix.run_loop():
 
     points = [v @ mat for v in vertices]
     norms = [v @ mat for v in normals]
-    p = [pix.Float2(v[0], v[1]) * (5/(v[2] + 4))
+    p : list[pix.Float2] = [pix.Float2(v[0], v[1]) * (5/(v[2] + 4))
          * center.y/3 + center for v in points]
 
     for i, q in enumerate(quads):

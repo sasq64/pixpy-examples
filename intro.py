@@ -3,9 +3,9 @@ import webbrowser
 import urllib.request
 import zipfile
 from pathlib import Path
-home = str(Path.home())
-
 import pixpy as pix
+
+home = str(Path.home())
 
 def download_and_unzip(url: str):
     global con,screen
@@ -20,7 +20,7 @@ def download_and_unzip(url: str):
     screen.draw(con, top_left = m, size=screen.size - m * 2)
     screen.swap()
     zf.extractall(home / "pix")
-    con.write(f"Done!")
+    con.write("Done!")
     screen.draw(con, top_left = m, size=screen.size - m * 2)
     screen.swap()
     #file = zip_file_object.open(first_file)

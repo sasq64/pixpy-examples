@@ -49,10 +49,10 @@ while pix.run_loop():
         if c > 1:
             c = 1
         if 0 <= i < len(text):
-            l = letters[text[i]]
+            img = letters[text[i]]
             screen.draw_color = pix.rgba(
                 math.sin(a*2) * 0.5 + 0.5, math.sin(a*0.3) * 0.5 + 0.5, 1, c)
-            screen.draw(image=l, center=p, rot=math.pi/2 - a)
+            screen.draw(image=img, center=p, rot=math.pi/2 - a)
     index += 0.1
     screen.swap()
     # exit()

@@ -22,7 +22,6 @@ class TestStringMethods(unittest.TestCase):
         a = Float2(2, 4)
         b = Float2(5, 3)
         z = 6
-        zf = 0.5
         self.assertEqual(a * b, Float2(10, 12))
         self.assertEqual(a * z, Float2(12, 24))
         a *= z

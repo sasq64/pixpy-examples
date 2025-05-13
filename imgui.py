@@ -1,3 +1,4 @@
+# Dont run me!
 import pixpy as pix
 from typing import TypeVar, Generic, Optional, Type
 from types import TracebackType

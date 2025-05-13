@@ -34,7 +34,7 @@ class Game:
     def update(self):
         for event in pix.all_events():
             match event:
-                case pix.event.Key(k):
+                case pix.event.Key(key = k):
                     diff = Game.MOVE_LOOKUP[k]
                     if diff:
                         new_pos = self.player_pos + diff
@@ -50,8 +50,8 @@ class Game:
 
     def render(self):
         self.screen.clear(pix.color.BLUE)
-        self.con.render(self.screen.context, self.offset,
-                        self.con.grid_size * self.tile_size * self.zoom)
+        self.screen.draw(self.con, top_left = self.offset,
+                        size = self.con.grid_size * self.tile_size * self.zoom)
         self.screen.draw(image=self.player,
                          top_left=self.to_screen(self.player_pos),
                          size=self.player.size * self.zoom)

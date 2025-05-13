@@ -10,10 +10,10 @@ chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ.:,?! "
 for (img, c) in zip(tiles, chars):
     tile_map.get_image_for(c).copy_from(img)
 
-pos = screen.size - (0, 80)
+pos = screen.size - (0, 140)
 screen.fps = 0
 while pix.run_loop():
     screen.clear()
-    tile_map.render_text(screen, "HELLO OLD SCHOOL DEMO SCROLLER WORLD!", pos, (64, 64))
-    pos -= (screen.delta * 120, 0)
+    tile_map.render_text(screen, "HELLO OLD SCHOOL DEMO SCROLLER WORLD!", pos, size=(128,128))
+    pos -= (4, 0) #(screen.delta * 120, 0)
     screen.swap()

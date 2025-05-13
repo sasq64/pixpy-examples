@@ -28,8 +28,6 @@ class Country:
     pos: pix.Float2
     name: str
     iso2: str
-    gdp: int
-    population: int
     highlight: int
 
 
@@ -52,9 +50,6 @@ def bbox(points: list[pix.Float2]) -> tuple[pix.Float2, pix.Float2]:
 class Property(TypedDict):
     name: str
     name_long: str
-    sovereignt: str
-    pop_est: int
-    gdp_md: int
     iso_a2_eh: str
     label_x: float
     label_y: float
@@ -105,15 +100,13 @@ def read_geo() -> list[Country]:
             props = f['properties']
             country.name = props['name_long']
             country.iso2 = props['iso_a2_eh']
-            country.gdp = int(props['gdp_md'])
-            country.population = int(props['pop_est'])
             country.pos = pix.Float2(props['label_x'], props['label_y'])
 
             countries.append(country)
     return countries
 
 
-screen = pix.open_display(width=1920, height=1080, full_screen=True)
+screen = pix.open_display(width=1920, height=1080)
 canvas = pix.Image(size=screen.size)
 
 font = pix.load_font("data/hyperspace_bold.ttf")
@@ -129,10 +122,8 @@ def draw_world():
     canvas.clear()
     for country in countries:
         for points in country.polygons:
-            red = 0 # country.population * 255 // 1500000000
-            canvas.draw_color = (red << 24) | 0x000050FF
+            canvas.draw_color = 0x000050FF
             canvas.polygon(points)
-    print(f"{canvas.offset} {canvas.scale}")
 
 
 guess = random.randrange(len(countries))
@@ -174,7 +165,6 @@ while pix.run_loop():
         hilight_time -= 1
 
     xy = canvas.get_pointer()
-    inside = None
     for country in countries:
         screen.line_width = 2
         min = country.bbox[0]
@@ -218,20 +208,9 @@ while pix.run_loop():
                 score -= 2
                 last_result = "Incorrect"
 
-    if pix.was_pressed(pix.key.LEFT):
-        canvas.offset -= (10,0)
-        draw_world()
-    if pix.was_pressed(pix.key.RIGHT):
-        canvas.offset += (10,0)
-        draw_world()
-    if pix.was_pressed(pix.key.UP):
-        canvas.offset -= (0,10)
-        draw_world()
-    if pix.was_pressed(pix.key.DOWN):
-        canvas.offset += (0,10)
-        draw_world()
     if pix.was_pressed('z'):
-        canvas.scale *= 1.2
+        canvas.scale *= 2
+        canvas.offset = offset - pix.get_pointer()
         draw_world()
     elif pix.was_pressed('x'):
         canvas.scale = scale

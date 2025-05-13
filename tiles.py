@@ -18,9 +18,8 @@ if os.path.exists("data/tiles.dat"):
 
 con.put((10,10), 1025)
 offset = pix.Float2(0,0)
-
 while pix.run_loop():
     screen.clear(pix.color.BLUE)
-    con.render(screen.context, offset, con.grid_size * tile_size * 2)
+    screen.draw(con, offset, con.grid_size * tile_size * 2)
     offset -= (1,0)
     screen.swap()

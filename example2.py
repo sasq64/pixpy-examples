@@ -8,7 +8,7 @@ font = pix.load_font("data/Impact.ttf")
 hello_image = font.make_image("Hallå Världen!", size=32, color=pix.color.ORANGE)
 
 screen.draw_color = pix.color.YELLOW
-screen.line_width = 5.0
+screen.line_width = 4.0
 
 while pix.run_loop():
     screen.clear()

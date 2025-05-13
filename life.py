@@ -6,7 +6,7 @@ def main():
     screen = pix.open_display(width=1280, height=720)
     con = pix.Console(cols=160, rows=90)
     cols,rows = con.grid_size
-    con.fg_color = pix.color.YELLOW
+    con.set_color(pix.color.YELLOW, pix.color.BLACK)
 
     counts = [0] * (cols * rows + cols + 1)
     board = [0] * (cols * rows + cols + 1)

@@ -5,16 +5,44 @@ import pixpy as pix
 import json
 import random
 
+F2 = tuple[float, float]
+
+def bbox(points: list[F2] | list[pix.Float2]) -> tuple[pix.Float2, pix.Float2]:
+    """Create a bounding box from `points`"""
+
+    max_x, max_y = sys.float_info.min, sys.float_info.min
+    min_x, min_y = sys.float_info.max, sys.float_info.max
+    for x,y in points:
+        if x < min_x:
+            min_x = x
+        if y < min_y:
+            min_y = y
+        if x > max_x:
+            max_x = x
+        if y > max_y:
+            max_y = y
+    return (pix.Float2(min_x, min_y), pix.Float2(max_x, max_y))
+
 @dataclass
 class BBox:
     min: pix.Float2
     max: pix.Float2
 
+    def __init__(self, min: pix.Float2, max: pix.Float2):
+        self.min, self.max = min,max
+
+    @staticmethod
+    def from_points(points: list[F2] | list[pix.Float2]) -> "BBox":
+        x,y = bbox(points)
+        return BBox(x, y)
+
     def __add__(self, p: pix.Float2) -> "BBox":
         return BBox(self.min + p, self.max + p)
 
     def __mul__(self, p: pix.Float2):
-        pass
+        if p.x < 0 or p.y < 0:
+            return BBox.from_points([self.min * p, self.max * p])
+        return BBox(self.min * p, self.max * p)
 
 
 
@@ -28,50 +56,25 @@ class Country:
     pos: pix.Float2
     name: str
     iso2: str
-    gdp: int
-    population: int
     highlight: int
 
-
-def bbox(points: list[pix.Float2]) -> tuple[pix.Float2, pix.Float2]:
-    """Create a bounding box from `points`"""
-
-    max_x, max_y = sys.float_info.min, sys.float_info.min
-    min_x, min_y = sys.float_info.max, sys.float_info.max
-    for p in points:
-        if p.x < min_x:
-            min_x = p.x
-        if p.y < min_y:
-            min_y = p.y
-        if p.x > max_x:
-            max_x = p.x
-        if p.y > max_y:
-            max_y = p.y
-    return (pix.Float2(min_x, min_y), pix.Float2(max_x, max_y))
 
 class Property(TypedDict):
     name: str
     name_long: str
-    sovereignt: str
-    pop_est: int
-    gdp_md: int
     iso_a2_eh: str
     label_x: float
     label_y: float
 
-
-Point = list[float] # Always size 2
-
-LinearRing = list[Point]
-
+PointList = list[list[float]]
 
 class Geometry(TypedDict):
     type : Literal['Polygon']
-    coordinates: list[LinearRing]
+    coordinates: list[PointList]
 
 class MutliGeometry(TypedDict):
     type : Literal['MultiPolygon']
-    coordinates: list[list[LinearRing]]
+    coordinates: list[list[PointList]]
 
 class Feature(TypedDict):
     properties: Property
@@ -87,52 +90,46 @@ def read_geo() -> list[Country]:
         for f in data['features']:
             geo = f['geometry']
             polys: list[list[pix.Float2]] = []
-            box: list[pix.Float2] = []
             if geo['type'] == 'Polygon':
-                for ring in geo['coordinates']:
-                    points = [pix.Float2(v[0], -v[1]) for v in ring]
+                coords = geo['coordinates'][0]
+                points = [pix.Float2(v[0], v[1]) for v in coords]
+                box = BBox.from_points(points))
+                polys.append(points)
+            else:
+                
+                for multi in geo['coordinates']:
+                    coords = multi[0] 
+                    points = [pix.Float2(v[0], v[1]) for v in coords]
                     box += bbox(points)
                     polys.append(points)
-            else:
-                for multi in geo['coordinates']:
-                    for coords in multi:
-                        points = [pix.Float2(v[0], -v[1]) for v in coords]
-                        box += bbox(points)
-                        polys.append(points)
             country = Country()
             country.bbox = bbox(box)
             country.polygons = polys
             props = f['properties']
             country.name = props['name_long']
             country.iso2 = props['iso_a2_eh']
-            country.gdp = int(props['gdp_md'])
-            country.population = int(props['pop_est'])
             country.pos = pix.Float2(props['label_x'], props['label_y'])
 
             countries.append(country)
     return countries
 
 
-screen = pix.open_display(width=1920, height=1080, full_screen=True)
+screen = pix.open_display(width=1920, height=1080)
 canvas = pix.Image(size=screen.size)
 
 font = pix.load_font("data/hyperspace_bold.ttf")
 countries = read_geo()
 
-scale = pix.Float2(5.3, 6.7)
-canvas.scale = scale
-offset = pix.Float2(960, 550)
-canvas.offset = offset
+scale = pix.Float2(5.3, -6.7) * 0.80
+offset = pix.Float2(960 - 250, 500)
 
-def draw_world():
-    canvas.draw_color = 0x000050FF
-    canvas.clear()
-    for country in countries:
-        for points in country.polygons:
-            red = 0 # country.population * 255 // 1500000000
-            canvas.draw_color = (red << 24) | 0x000050FF
-            canvas.polygon(points)
-    print(f"{canvas.offset} {canvas.scale}")
+canvas.draw_color = 0x000050FF
+for country in countries:
+    #if country.name == "Lesotho":
+    #    les = country
+    for points in country.polygons:
+        canvas.draw_color = 0x000050FF
+        canvas.polygon([p * scale + offset for p in points])
 
 
 guess = random.randrange(len(countries))
@@ -149,12 +146,12 @@ questions = COUNT
 hilight = None
 hilight_time = 0
 
-draw_world()
+zoom = 2
 
 while pix.run_loop():
     screen.clear()
     screen.draw_color = pix.color.WHITE
-    screen.draw(canvas, size = canvas.size)
+    screen.draw(canvas, size = canvas.size*zoom)
 
     img = font.make_image(f"#{COUNT-questions+1} {gc.name}", 40, 0x8080E0FF)
     screen.draw(img, top_left=(10, 10))
@@ -173,36 +170,30 @@ while pix.run_loop():
             hilight = None
         hilight_time -= 1
 
-    xy = canvas.get_pointer()
-    inside = None
+    xy = (pix.get_pointer() / zoom - offset) / scale 
     for country in countries:
         screen.line_width = 2
-        min = country.bbox[0]
-        max = country.bbox[1]
-        if xy.x > min.x and xy.x < max.x and xy.y > min.y and xy.y < max.y:
-            for points in country.polygons:
-                screen.draw_color = pix.color.BLACK
-                if xy.inside_polygon(points):
-                    inside = country
+        #min = country.bbox[0] * scale #+ offset
+        #max = country.bbox[1] * scale #+ offset
+        #if xy.x > min.x and xy.x < max.x and xy.y > max.y and xy.y < min.y:
+        for points in country.polygons:
+            screen.draw_color = pix.color.BLACK
+            if xy.inside_polygon(points):
+                points2 = [(p * scale + offset) * zoom for p in points]
+                screen.draw_color = pix.color.LIGHT_BLUE
+                screen.polygon(points2)
+                screen.draw_color = pix.color.WHITE
+                screen.lines(points2)
+                inside = country
+            if hilight is not None and hilight.name == country.name:
+                points2 = [p * scale * zoom + offset for p in points]
+                screen.draw_color = pix.color.LIGHT_GREEN
+                screen.polygon(points2)
+                screen.draw_color = pix.color.WHITE
+                screen.lines(points2)
+                inside = country
 
-    screen.scale = canvas.scale
-    screen.offset = canvas.offset
-    if inside:
-        screen.draw_color = pix.color.WHITE
-        for poly in inside.polygons:
-            screen.lines(poly)
-        screen.draw_color = pix.color.LIGHT_BLUE
-        screen.complex_polygon(inside.polygons)
 
-    if hilight:
-        screen.draw_color = pix.color.WHITE
-        for poly in hilight.polygons:
-            screen.lines(poly)
-        screen.draw_color = pix.color.LIGHT_GREEN
-        screen.complex_polygon(hilight.polygons)
-
-    screen.scale = pix.Float2.ONE
-    screen.offset = pix.Float2.ZERO
 
     if questions > 0:
         if pix.was_pressed(pix.key.LEFT_MOUSE):
@@ -217,27 +208,6 @@ while pix.run_loop():
             else:
                 score -= 2
                 last_result = "Incorrect"
-
-    if pix.was_pressed(pix.key.LEFT):
-        canvas.offset -= (10,0)
-        draw_world()
-    if pix.was_pressed(pix.key.RIGHT):
-        canvas.offset += (10,0)
-        draw_world()
-    if pix.was_pressed(pix.key.UP):
-        canvas.offset -= (0,10)
-        draw_world()
-    if pix.was_pressed(pix.key.DOWN):
-        canvas.offset += (0,10)
-        draw_world()
-    if pix.was_pressed('z'):
-        canvas.scale *= 1.2
-        draw_world()
-    elif pix.was_pressed('x'):
-        canvas.scale = scale
-        canvas.offset = offset
-        draw_world()
-
     if pix.was_pressed(pix.key.SPACE):
         last_result = "Pass"
         hilight = gc
@@ -252,5 +222,4 @@ while pix.run_loop():
         gc = countries[guess]
     if score < 0:
         score = 0
-
     screen.swap()

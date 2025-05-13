@@ -40,6 +40,7 @@ info_pos = 0
 con.set_color(fg = pix.color.YELLOW, bg = pix.color.BLACK)
 con.write("\n TITLE:\n COMPOSER:\n COPYRIGHT:\n\n TIME:00:00/00:00 -- SONG:00/00 -- ")
 con.set_color(fg = pix.color.GREEN, bg = pix.color.BLACK)
+
 def handle_meta(meta_list: list[str]):
     global song, songs, info_text, info_pos
     con.cursor_pos = (0,0)

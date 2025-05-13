@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 import pixpy as pix
 
+TileNo = int
+
 BOX = 9
 PLAYER = 13*4
 GOAL = 13*7+11
@@ -31,8 +33,10 @@ class Sprite:
 
 Tile = tuple[int, int]
 
+Level = list[list[Tile]]
+
 class Sokoban:
-    def load_levels(self, fn: str):
+    def load_levels(self, fn: str) -> None:
 
         block_map  : dict[str, Tile]= {
             '#': (WALL,0),
@@ -44,9 +48,9 @@ class Sokoban:
             '+': (GOAL,PLAYER)
         }
 
-        self.levels : list[list[list[Tile]]] = []
+        self.levels : list[Level] = []
 
-        level : list[list[Tile]] = []
+        level : Level = []
         with open(fn, "r") as f:
             for line in f.readlines():
                 if line[0] == ';':
@@ -70,7 +74,7 @@ class Sokoban:
         self.level = self.levels[0]
         self.set_level()
 
-    def set_level(self):
+    def set_level(self) -> None:
         self.con.clear()
         level = self.level
         self.correct = 0
@@ -92,7 +96,7 @@ class Sokoban:
         self.sprites = sprites
 
 
-    def run(self):
+    def run(self) -> None:
         while pix.run_loop():
             self.screen.draw(self.con)
             for sprite in self.sprites:

@@ -135,6 +135,8 @@ offset = screen.size / 2
 h = screen.size.y
 scale = Float2(h / 180, h / 180)
 
+screen.line_width = 4
+
 for i in range(0, len(mad), 4):
     p0 = Float2(mad[i], -mad[i + 1])
     p1 = Float2(mad[i + 2], -mad[i + 3])
