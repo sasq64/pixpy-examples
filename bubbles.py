@@ -34,7 +34,7 @@ screen = pix.open_display(size=(1280, 720))
 screen.point_size = 3
 bg = BubbleGen()
 
-n = 300
+n = 200
 colors = [pix.rgba(i / n, j / n, 99 / 200, 1.0) for i in range(n) for j in range(n)]
 
 s = screen.height / 4

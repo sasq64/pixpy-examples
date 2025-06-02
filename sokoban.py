@@ -4,23 +4,24 @@ import pixpy as pix
 TileNo = int
 
 BOX = 9
-PLAYER = 13*4
-GOAL = 13*7+11
-FLOOR = 13*6+11
-WALL = 6*13+9
-GOAL_BOX = 9+4*13
+PLAYER = 13 * 4
+GOAL = 13 * 7 + 11
+FLOOR = 13 * 6 + 11
+WALL = 6 * 13 + 9
+GOAL_BOX = 9 + 4 * 13
+
 
 @dataclass
 class Sprite:
     pos: pix.Float2
     screen_pos: pix.Float2
     img: pix.Image
-    vel: pix.Float2 = field(default_factory=pix.Float2) 
+    vel: pix.Float2 = field(default_factory=pix.Float2)
     count: int = 0
-    
+
     def move_to(self, target: pix.Float2):
         self.pos = target
-        self.vel = (target - self.screen_pos) / 8 
+        self.vel = (target - self.screen_pos) / 8
         self.count = 8
 
     def update(self):
@@ -35,25 +36,25 @@ Tile = tuple[int, int]
 
 Level = list[list[Tile]]
 
+
 class Sokoban:
     def load_levels(self, fn: str) -> None:
-
-        block_map  : dict[str, Tile]= {
-            '#': (WALL,0),
-            ' ': (FLOOR,0),
-            '$': (FLOOR, BOX),
-            '.': (GOAL,0),
-            '*': (GOAL,BOX),
-            '@': (FLOOR,PLAYER),
-            '+': (GOAL,PLAYER)
+        block_map: dict[str, Tile] = {
+            "#": (WALL, 0),
+            " ": (FLOOR, 0),
+            "$": (FLOOR, BOX),
+            ".": (GOAL, 0),
+            "*": (GOAL, BOX),
+            "@": (FLOOR, PLAYER),
+            "+": (GOAL, PLAYER),
         }
 
-        self.levels : list[Level] = []
+        self.levels: list[Level] = []
 
-        level : Level = []
+        level: Level = []
         with open(fn, "r") as f:
             for line in f.readlines():
-                if line[0] == ';':
+                if line[0] == ";":
                     self.levels.append(level)
                     level = []
                     continue
@@ -65,7 +66,7 @@ class Sokoban:
         self.tile_size = pix.Float2(64, 64)
 
         self.con = pix.Console(cols=20, rows=20, tile_size=self.tile_size)
-        self.con.set_color(pix.color.WHITE, 0x779699ff)
+        self.con.set_color(pix.color.WHITE, 0x779699FF)
         tiles = pix.load_png("data/sokoban_tilesheet.png").split(size=self.tile_size)
         for i, tile in enumerate(tiles):
             self.con.get_image_for(256 + i).copy_from(tile)
@@ -78,14 +79,16 @@ class Sokoban:
         self.con.clear()
         level = self.level
         self.correct = 0
-        pos = pix.Int2(0,0)
-        sprites : list[Sprite] = []
-        self.boxes : list[Sprite] = []
+        pos = pix.Int2(0, 0)
+        sprites: list[Sprite] = []
+        self.boxes: list[Sprite] = []
         for line in level:
             pos = pix.Int2(0, pos.y + 1)
-            for (tile,item) in line:
+            for tile, item in line:
                 if item != 0:
-                    sprite = Sprite(pos.tof(), pos.tof(), self.con.get_image_for(256+item))
+                    sprite = Sprite(
+                        pos.tof(), pos.tof(), self.con.get_image_for(256 + item)
+                    )
                     sprites.append(sprite)
                     if item == PLAYER:
                         self.player = sprite
@@ -94,7 +97,6 @@ class Sokoban:
                 self.con.put(pos, tile + 256)
                 pos += (1, 0)
         self.sprites = sprites
-
 
     def run(self) -> None:
         while pix.run_loop():
@@ -117,7 +119,7 @@ class Sokoban:
 
             if delta != pix.Float2.ZERO:
                 target = self.player.pos + delta
-                tile = self.con.get(target.toi()) 
+                tile = self.con.get(target.toi())
                 move = True
                 self.correct = 0
                 if tile != WALL + 256:
@@ -139,12 +141,13 @@ class Sokoban:
                                     self.correct += 1
                     if move:
                         self.player.move_to(target)
-            img = pix.Font.UNSCII_FONT.make_image(f"{self.correct}/{len(self.boxes)}", 16*4)
+            img = pix.Font.UNSCII_FONT.make_image(
+                f"{self.correct}/{len(self.boxes)}", 16 * 4
+            )
             self.screen.draw(img)
 
             self.screen.swap()
-        
+
 
 game = Sokoban()
 game.run()
-

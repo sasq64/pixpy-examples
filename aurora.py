@@ -27,7 +27,7 @@ logo = logo.crop(size=(logo.size.x, 120))
 
 font = pix.load_font("data/Impact.ttf", 20)
 image = pix.Image(320, 64)
-#font.make_image("AURORA", 64)
+
 lines = image.split(width=1, height=int(image.size.y))
 scroller = font.make_image("THIS IS A SCROLLTEXT, OR SOMETHING LIKE IT", 64)
 

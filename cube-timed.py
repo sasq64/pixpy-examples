@@ -6,19 +6,22 @@ import math
 import random
 
 
-def make_x_mat(a: float): 
+def make_x_mat(a: float):
+    """Create a matrix that rotates a 3D point around the X-axis by `a` degrees"""
     return np.array([[1.0, 0.0, 0.0],
                     [0.0, math.cos(a), -math.sin(a)],
                     [0.0, math.sin(a), math.cos(a)]])
 
 
 def make_y_mat(a: float):
+    """Create a matrix that rotates a 3D point around the Y-axis by `a` degrees"""
     return np.array([[math.cos(a), 0.0, math.sin(a)],
                      [0.0, 1.0, 0.0],
                      [-math.sin(a), 0.0, math.cos(a)]])
 
 
 def make_z_mat(a: float):
+    """Create a matrix that rotates a 3D point around the Z-axis by `a` degrees"""
     return np.array([[math.cos(a), -math.sin(a), 0.0],
                      [math.sin(a), math.cos(a), 0.0],
                      [0.0, 0.0, 1.0]])
@@ -51,7 +54,6 @@ for i,plane in enumerate(planes):
     for y in range(plane.size.toi().y//3):
         plane.set_pixel((random.randint(0,plane.size.toi().x), y*3+i), c)
 
-print(screen.refresh_rate)
 while pix.run_loop():
 
     screen.clear()
@@ -63,13 +65,14 @@ while pix.run_loop():
         screen.draw(image=plane, top_left=(x, 0), size=screen.size)
         screen.draw(image=plane, top_left=(x - screen.size.x, 0), size=screen.size)
 
-    # Render cube
+    # Rotate cube
     t = screen.seconds
     center = screen.size / 2
     xa = t * 0.8
     ya = t * 0.2
     za = t * 0.05
 
+    # Transform points 
     mat = make_x_mat(xa) @ make_y_mat(ya) @ make_z_mat(za)
 
     points = [v @ mat for v in vertices]
@@ -77,6 +80,7 @@ while pix.run_loop():
     p : list[pix.Float2] = [pix.Float2(v[0], v[1]) * (5/(v[2] + 4))
          * center.y/3 + center for v in points]
 
+    # Render cube
     for i, q in enumerate(quads):
         c = -norms[i][2]
         if c > 0 :

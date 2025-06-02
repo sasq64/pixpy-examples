@@ -94,8 +94,8 @@ while pix.run_loop():
     #screen.draw_color = pix.color.RED
     #screen.draw(image, center=logo_center, size=image.size * 10)
     screen.draw_color = pix.color.WHITE
-    #screen.blend_mode = pix.BLEND_NORMAL
-    #screen.draw(image, center=logo_center, size=image.size * 2)
+    screen.blend_mode = pix.BLEND_NORMAL
+    screen.draw(image, center=logo_center, size=image.size * 2)
 
     pos = pix.Float2(240,20)
     xx = 240

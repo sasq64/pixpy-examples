@@ -1,7 +1,7 @@
 import os
 import pixpy as pix
 
-screen = pix.open_display((1280, 720))
+screen = pix.open_display(size=(1280, 720))
 
 sprites: dict[str, list[pix.Image]] = {}
 with os.scandir('data/knight') as it:

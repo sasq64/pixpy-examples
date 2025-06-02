@@ -62,7 +62,7 @@ class Sprite:
         image = pix.Image(size)
         image.clear(pix.color.TRANSP)
         image.line_width = 1
-        image.lines(points + [points[0]])
+        image.lines(points + [points[0]]) # type: ignore
         return Sprite(image, pos=Float2.ZERO)
 
 
@@ -75,6 +75,7 @@ class State(Enum):
 
     GAME_OVER = 2
     "The game is over."
+
 
 class Asteroids:
     "An Asteroids game for pixpy."

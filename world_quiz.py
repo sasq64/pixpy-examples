@@ -93,7 +93,7 @@ def read_geo() -> list[Country]:
             if geo['type'] == 'Polygon':
                 coords = geo['coordinates'][0]
                 points = [pix.Float2(v[0], v[1]) for v in coords]
-                box = BBox.from_points(points))
+                box = BBox.from_points(points)
                 polys.append(points)
             else:
                 

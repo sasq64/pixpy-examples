@@ -10,5 +10,4 @@ pix.run_every_frame(frame_fn)
 
 con = pix.Console(font_file="data/Hack.ttf", font_size=16, rows=60, cols=60)
 con.write("Hello\nThis is the Hack font instead\nof the normal font.")
-con.render(screen.context)
-#screen.draw(con)
+screen.draw(con)

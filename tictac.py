@@ -3,7 +3,7 @@ import pixpy as pix
 Float2 = pix.Float2
 
 
-def cross(context: pix.Context, xy: Float2, r: float):
+def cross(context: pix.Canvas, xy: Float2, r: float):
     context.line(xy - (r, r), xy + (r, r))
     context.line(xy + (r, -r), xy + (-r, r))
 
@@ -77,7 +77,7 @@ class Board:
 
 
 class TicTac:
-    def __init__(self, context: pix.Context):
+    def __init__(self, context: pix.Canvas):
         self.context = context
         self.boards: list[Board] = []
         self.board_size = Float2(150, 150)
@@ -111,7 +111,6 @@ class TicTac:
                         self.player ^= 1
                         self.wins[i] = board.check()
                         self.winner = check_win(self.wins)
-
 
     def render(self):
         ctx = self.context
@@ -153,6 +152,7 @@ class TicTac:
                 top_left=Float2(100, 100) - self.m / 2,
                 size=(self.board_size + self.m) * 3,
             )
+
 
 ####
 

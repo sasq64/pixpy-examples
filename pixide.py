@@ -90,7 +90,12 @@ def run(source: str):
 def main():
     global screen
     screen = pix.open_display(width=80 * 8 * 2, height=25 * 16 * 2)
-    con = pix.Console(80, 25, font_file="data/Hack.ttf", font_size=32)
+    con = pix.Console(80, 25, font_file="data/Hack.ttf", font_size=28)
+
+    title = pix.Console(80, 1, font_file="data/Hack.ttf", font_size=28)
+    title.set_color(pix.color.DARK_GREY, pix.color.LIGHT_BLUE)
+    title.clear()
+    title.write("example.py")
 
     comp =  ListBox()
     comp_enabled = False
@@ -148,7 +153,8 @@ def main():
         edit.update(keep)
         edit.render()
         screen.clear(pix.color.DARK_GREY)
-        screen.draw(con, size=screen.size)
+        screen.draw(con, top_left=(0, con.tile_size.y), size=con.size)
+        screen.draw(title, size=title.size)
         if comp_enabled:
             comp.render(screen)
 
